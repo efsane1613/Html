@@ -1,0 +1,15 @@
+# Karataş Vidanjör - Robots.txt
+# Arama motorları için kurallar
+
+User-agent: *
+Allow: /
+Disallow: /config/
+Disallow: /contact_handler.php
+Disallow: /contact_logs.txt
+Disallow: /*.log
+
+# Sitemap
+Sitemap: https://karatasvidanjor.com/sitemap.xml
+
+# Crawl-delay (opsiyonel)
+# Crawl-delay: 1
