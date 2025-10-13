@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cansuaritma.com - Su Arıtma Sistemleri</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #0066cc, #004499);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(0,102,204,0.9), rgba(0,68,153,0.9)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="water" patternUnits="userSpaceOnUse" width="100" height="100"><circle cx="50" cy="50" r="2" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="1200" height="600" fill="url(%23water)"/></svg>');
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 2rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 1rem 2.5rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255,107,53,0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255,107,53,0.4);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 5rem 0;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: #0066cc;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .service-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            color: #0066cc;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .service-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* About Section */
+        .about {
+            padding: 5rem 0;
+            background: white;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: #0066cc;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .about-image {
+            text-align: center;
+        }
+
+        .about-image img {
+            max-width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #0066cc, #004499);
+            color: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .feature-item i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #ff6b35;
+        }
+
+        .feature-item h4 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 5rem 0;
+            background: #f8f9fa;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .contact-info {
+            padding: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .contact-item i {
+            font-size: 1.5rem;
+            color: #0066cc;
+            margin-right: 1rem;
+            width: 30px;
+        }
+
+        .contact-form {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #0066cc, #004499);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,102,204,0.3);
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 0 1rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #0066cc;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            line-height: 1.6;
+        }
+
+        .footer-section a:hover {
+            color: #0066cc;
+        }
+
+        /* Fixed Buttons */
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #25d366;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 20px rgba(37,211,102,0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .whatsapp-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(37,211,102,0.6);
+        }
+
+        .search-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #0066cc;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 20px rgba(0,102,204,0.4);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .search-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(0,102,204,0.6);
+        }
+
+        /* Search Modal */
+        .search-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .search-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .close-search {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .contact-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .service-card,
+            .contact-form {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="#" class="logo">Cansuaritma.com</a>
+            <ul class="nav-links">
+                <li><a href="#home">Ana Sayfa</a></li>
+                <li><a href="#services">Hizmetler</a></li>
+                <li><a href="#about">Hakkımızda</a></li>
+                <li><a href="#contact">İletişim</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Temiz Su, Sağlıklı Yaşam</h1>
+            <p>Profesyonel su arıtma sistemleri ile ailenizin sağlığını koruyun. En kaliteli teknoloji ve güvenilir hizmet.</p>
+            <a href="#contact" class="cta-button">Ücretsiz Keşif Talep Et</a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <h2 class="section-title">Su Arıtma Sistemlerimiz</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-tint"></i>
+                    </div>
+                    <h3>Reverse Osmosis Sistemleri</h3>
+                    <p>En gelişmiş ters osmoz teknolojisi ile %99.9 arınmış, mineral dengeli temiz su. Ailenizin sağlığı için en iyi seçim.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-filter"></i>
+                    </div>
+                    <h3>Karbon Filtre Sistemleri</h3>
+                    <p>Aktif karbon teknolojisi ile klorin, koku ve tat giderimi. Ekonomik ve etkili çözüm.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3>Ev Tipi Su Arıtma</h3>
+                    <p>Evleriniz için özel tasarlanmış kompakt ve şık su arıtma sistemleri. Kolay kurulum ve bakım.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>Endüstriyel Sistemler</h3>
+                    <p>Büyük kapasiteli endüstriyel su arıtma çözümleri. İşletmenizin ihtiyaçlarına özel tasarım.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>Bakım ve Servis</h3>
+                    <p>7/24 teknik destek ve düzenli bakım hizmetleri. Sisteminizin verimli çalışması için profesyonel destek.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-microscope"></i>
+                    </div>
+                    <h3>Su Analizi</h3>
+                    <p>Ücretsiz su kalitesi analizi ve en uygun sistem önerisi. Bilimsel verilerle doğru çözüm.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Neden Cansuaritma.com?</h2>
+                    <p>15 yıllık deneyimimiz ile Türkiye'nin önde gelen su arıtma uzmanlarıyız. Ailenizin sağlığını korumak için en kaliteli ürünleri ve en güvenilir hizmeti sunuyoruz.</p>
+                    <p>Uluslararası kalite standartlarında üretilmiş sistemlerimiz, uzman ekibimizin profesyonel kurulumu ve 7/24 teknik desteğimizle hizmetinizdeyiz.</p>
+                    <p>Müşteri memnuniyeti odaklı yaklaşımımız, şeffaf fiyatlandırmamız ve garanti güvencemizle tercih edilen marka olduk.</p>
+                </div>
+                <div class="about-image">
+                    <div style="width: 100%; height: 400px; background: linear-gradient(45deg, #0066cc, #004499); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">
+                        <i class="fas fa-water"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Avantajlarımız</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-award"></i>
+                    <h4>15 Yıl Deneyim</h4>
+                    <p>Sektörde 15 yıllık deneyim ve binlerce memnun müşteri</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>5 Yıl Garanti</h4>
+                    <p>Tüm sistemlerimizde 5 yıl garanti güvencesi</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-headset"></i>
+                    <h4>7/24 Destek</h4>
+                    <p>Kesintisiz teknik destek ve acil müdahale hizmeti</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-truck"></i>
+                    <h4>Ücretsiz Kurulum</h4>
+                    <p>Profesyonel kurulum ve ilk bakım ücretsiz</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">İletişim</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Bizimle İletişime Geçin</h3>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <strong>Telefon:</strong><br>
+                            0534 302 99 48
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <strong>E-posta:</strong><br>
+                            info@cansuaritma.com
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <strong>Adres:</strong><br>
+                            Su Arıtma Merkezi<br>
+                            İstanbul, Türkiye
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <strong>Çalışma Saatleri:</strong><br>
+                            Pazartesi - Cumartesi: 08:00 - 18:00<br>
+                            Pazar: 10:00 - 16:00
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <h3>Ücretsiz Keşif Talep Edin</h3>
+                    <form>
+                        <div class="form-group">
+                            <label for="name">Ad Soyad</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Telefon</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">E-posta</label>
+                            <input type="email" id="email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Mesajınız</label>
+                            <textarea id="message" name="message" rows="4" placeholder="Su arıtma ihtiyacınız hakkında detay verebilirsiniz..."></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Gönder</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Cansuaritma.com</h4>
+                    <p>Temiz su, sağlıklı yaşam için güvenilir çözüm ortağınız. Kaliteli ürün ve hizmet garantisi.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Hızlı Linkler</h4>
+                    <p><a href="#home">Ana Sayfa</a></p>
+                    <p><a href="#services">Hizmetler</a></p>
+                    <p><a href="#about">Hakkımızda</a></p>
+                    <p><a href="#contact">İletişim</a></p>
+                </div>
+                <div class="footer-section">
+                    <h4>Hizmetler</h4>
+                    <p><a href="#">Reverse Osmosis</a></p>
+                    <p><a href="#">Karbon Filtre</a></p>
+                    <p><a href="#">Endüstriyel Sistemler</a></p>
+                    <p><a href="#">Bakım & Servis</a></p>
+                </div>
+                <div class="footer-section">
+                    <h4>İletişim</h4>
+                    <p>Tel: 0534 302 99 48</p>
+                    <p>E-posta: info@cansuaritma.com</p>
+                    <p>İstanbul, Türkiye</p>
+                </div>
+            </div>
+            <hr style="margin: 2rem 0; border: none; height: 1px; background: #333;">
+            <p>&copy; 2024 Cansuaritma.com - Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
+
+    <!-- Fixed Buttons -->
+    <a href="https://wa.me/905343029948" class="whatsapp-btn" target="_blank" title="WhatsApp ile İletişim">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <button class="search-btn" onclick="openSearch()" title="Arama">
+        <i class="fas fa-search"></i>
+    </button>
+
+    <!-- Search Modal -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-content">
+            <button class="close-search" onclick="closeSearch()">&times;</button>
+            <h3>Site İçi Arama</h3>
+            <input type="text" class="search-input" placeholder="Aradığınızı yazın..." id="searchInput">
+            <div id="searchResults"></div>
+        </div>
+    </div>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Search functionality
+        function openSearch() {
+            document.getElementById('searchModal').style.display = 'flex';
+            document.getElementById('searchInput').focus();
+        }
+
+        function closeSearch() {
+            document.getElementById('searchModal').style.display = 'none';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResults').innerHTML = '';
+        }
+
+        // Close search modal when clicking outside
+        document.getElementById('searchModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSearch();
+            }
+        });
+
+        // Simple search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (query.length < 2) {
+                resultsDiv.innerHTML = '';
+                return;
+            }
+
+            const searchableContent = [
+                { title: 'Su Arıtma Sistemleri', content: 'reverse osmosis karbon filtre ev tipi endüstriyel', url: '#services' },
+                { title: 'Hakkımızda', content: '15 yıl deneyim kalite güvenilir profesyonel', url: '#about' },
+                { title: 'İletişim', content: 'telefon email adres çalışma saatleri', url: '#contact' },
+                { title: 'Ana Sayfa', content: 'temiz su sağlıklı yaşam', url: '#home' }
+            ];
+
+            const results = searchableContent.filter(item => 
+                item.title.toLowerCase().includes(query) || 
+                item.content.toLowerCase().includes(query)
+            );
+
+            if (results.length > 0) {
+                resultsDiv.innerHTML = '<h4>Arama Sonuçları:</h4>' + 
+                    results.map(result => 
+                        `<div style="padding: 10px; border-bottom: 1px solid #eee;">
+                            <a href="${result.url}" style="color: #0066cc; text-decoration: none;" onclick="closeSearch()">
+                                ${result.title}
+                            </a>
+                        </div>`
+                    ).join('');
+            } else {
+                resultsDiv.innerHTML = '<p>Sonuç bulunamadı.</p>';
+            }
+        });
+
+        // Form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Mesajınız alındı! En kısa sürede size dönüş yapacağız.');
+            this.reset();
+        });
+
+        // Header background on scroll
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(0, 102, 204, 0.95)';
+                header.style.backdropFilter = 'blur(10px)';
+            } else {
+                header.style.background = 'linear-gradient(135deg, #0066cc, #004499)';
+                header.style.backdropFilter = 'none';
+            }
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe service cards and other elements
+        document.querySelectorAll('.service-card, .feature-item, .contact-form').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
