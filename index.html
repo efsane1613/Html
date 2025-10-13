@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cansuaritma - Su Arıtma Sistemleri | Profesyonel Su Filtreleme Çözümleri</title>
+    <meta name="description" content="Cansuaritma ile evinizde ve işyerinizde temiz, sağlıklı su. Profesyonel su arıtma sistemleri, filtre değişimi ve bakım hizmetleri.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: #00d4ff;
+            font-size: 32px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: #00d4ff;
+            transform: translateY(-2px);
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #00d4ff;
+            transition: width 0.3s ease;
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/><circle cx="400" cy="700" r="120" fill="url(%23a)"/></svg>') no-repeat center center;
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-text .highlight {
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text p {
+            font-size: 1.3rem;
+            color: #fff;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #fff;
+            border: 2px solid #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #fff;
+            color: #333;
+            transform: translateY(-3px);
+        }
+
+        .hero-image {
+            position: relative;
+            text-align: center;
+        }
+
+        .water-drop {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            margin: 0 auto;
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .water-drop::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.3; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.8; transform: translateX(-50%) scale(1.1); }
+        }
+
+        /* Services Section */
+        .services {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background: #fff;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .service-card:hover::before {
+            left: 100%;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 2rem;
+            color: #fff;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .service-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Products Section */
+        .products {
+            padding: 100px 0;
+            background: #fff;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .product-card {
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: #fff;
+            position: relative;
+        }
+
+        .product-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="%23ffffff" opacity="0.3"/><circle cx="80" cy="30" r="1.5" fill="%23ffffff" opacity="0.5"/><circle cx="40" cy="60" r="1" fill="%23ffffff" opacity="0.4"/><circle cx="70" cy="70" r="2.5" fill="%23ffffff" opacity="0.2"/></svg>') repeat;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .product-content {
+            padding: 30px;
+        }
+
+        .product-card h3 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .product-card p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .product-features {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .product-features li {
+            padding: 5px 0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .product-features li i {
+            color: #00d4ff;
+            font-size: 0.9rem;
+        }
+
+        .product-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 20px;
+        }
+
+        /* About Section */
+        .about {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        .about-text p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            opacity: 0.9;
+            line-height: 1.8;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #00d4ff;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .about-image {
+            position: relative;
+            text-align: center;
+        }
+
+        .about-image .water-drop {
+            width: 250px;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            margin: 0 auto;
+            position: relative;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 100px 0;
+            background: #f8f9fa;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+        }
+
+        .contact-info h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .contact-item i {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        .contact-form {
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        /* Floating Buttons */
+        .floating-buttons {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .floating-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            pointer-events: auto;
+            text-decoration: none;
+        }
+
+        .search-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .whatsapp-btn {
+            background: linear-gradient(45deg, #25d366, #128c7e);
+        }
+
+        .whatsapp-btn:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 15px 35px rgba(37, 211, 102, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .about-content,
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+
+            .floating-buttons {
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+            }
+
+            .floating-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Scroll animations */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-tint"></i>
+                Cansuaritma
+            </a>
+            <ul class="nav-menu">
+                <li><a href="#home">Ana Sayfa</a></li>
+                <li><a href="#services">Hizmetler</a></li>
+                <li><a href="#products">Ürünler</a></li>
+                <li><a href="#about">Hakkımızda</a></li>
+                <li><a href="#contact">İletişim</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Temiz Su, <span class="highlight">Sağlıklı Yaşam</span></h1>
+                <p>Profesyonel su arıtma sistemleri ile ailenizin sağlığını koruyun. En kaliteli filtreleme teknolojisi, güvenilir hizmet garantisi.</p>
+                <div class="cta-buttons">
+                    <a href="#products" class="btn btn-primary">
+                        <i class="fas fa-shopping-cart"></i>
+                        Ürünleri İncele
+                    </a>
+                    <a href="#contact" class="btn btn-secondary">
+                        <i class="fas fa-phone"></i>
+                        Hemen Ara
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="water-drop">
+                    <i class="fas fa-tint" style="font-size: 4rem; color: rgba(255,255,255,0.8); margin-top: 80px;"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-title scroll-reveal">
+                <h2>Hizmetlerimiz</h2>
+                <p>Su arıtma konusunda uzman ekibimizle size en kaliteli hizmeti sunuyoruz</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card scroll-reveal">
+                    <div class="service-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <h3>Su Arıtma Sistemleri</h3>
+                    <p>Ev ve işyeri için profesyonel su arıtma sistemleri. Reverse osmosis teknolojisi ile en temiz suyu elde edin.</p>
+                </div>
+                <div class="service-card scroll-reveal">
+                    <div class="service-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>Bakım & Onarım</h3>
+                    <p>Düzenli bakım ve onarım hizmetleri ile sisteminizin uzun ömürlü olmasını sağlıyoruz.</p>
+                </div>
+                <div class="service-card scroll-reveal">
+                    <div class="service-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3>Filtre Değişimi</h3>
+                    <p>Zamanında filtre değişimi ile su kalitesini her zaman en üst seviyede tutuyoruz.</p>
+                </div>
+                <div class="service-card scroll-reveal">
+                    <div class="service-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>Ücretsiz Montaj</h3>
+                    <p>Satın aldığınız tüm ürünlerde ücretsiz montaj ve kurulum hizmeti sunuyoruz.</p>
+                </div>
+                <div class="service-card scroll-reveal">
+                    <div class="service-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Garanti</h3>
+                    <p>Tüm ürünlerimizde 2 yıl garanti ve 7/24 teknik destek hizmeti.</p>
+                </div>
+                <div class="service-card scroll-reveal">
+                    <div class="service-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3>Su Analizi</h3>
+                    <p>Ücretsiz su analizi ile su kalitenizi test ediyor, size en uygun çözümü öneriyoruz.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="products">
+        <div class="container">
+            <div class="section-title scroll-reveal">
+                <h2>Su Arıtma Sistemleri</h2>
+                <p>Farklı ihtiyaçlarınıza uygun profesyonel su arıtma çözümleri</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card scroll-reveal">
+                    <div class="product-image">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="product-content">
+                        <h3>Ev Tipi Su Arıtma Sistemi</h3>
+                        <p>5 aşamalı filtreleme sistemi ile evinizde temiz ve sağlıklı su. Aile boyu kullanım için ideal.</p>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Reverse Osmosis Teknolojisi</li>
+                            <li><i class="fas fa-check"></i> 5 Aşamalı Filtreleme</li>
+                            <li><i class="fas fa-check"></i> Mineral Zenginleştirme</li>
+                            <li><i class="fas fa-check"></i> Kolay Kullanım</li>
+                        </ul>
+                        <div class="product-price">₺2.500</div>
+                        <a href="#contact" class="btn btn-primary">Teklif Al</a>
+                    </div>
+                </div>
+                <div class="product-card scroll-reveal">
+                    <div class="product-image">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="product-content">
+                        <h3>İşyeri Su Arıtma Sistemi</h3>
+                        <p>Yüksek kapasiteli sistem ile ofis ve işyerlerinde sürekli temiz su temini.</p>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Yüksek Kapasite</li>
+                            <li><i class="fas fa-check"></i> 7 Aşamalı Filtreleme</li>
+                            <li><i class="fas fa-check"></i> Otomatik Temizlik</li>
+                            <li><i class="fas fa-check"></i> Enerji Tasarrufu</li>
+                        </ul>
+                        <div class="product-price">₺5.500</div>
+                        <a href="#contact" class="btn btn-primary">Teklif Al</a>
+                    </div>
+                </div>
+                <div class="product-card scroll-reveal">
+                    <div class="product-image">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <div class="product-content">
+                        <h3>Endüstriyel Su Arıtma</h3>
+                        <p>Büyük ölçekli işletmeler için özel tasarlanmış endüstriyel su arıtma çözümleri.</p>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Endüstriyel Kalite</li>
+                            <li><i class="fas fa-check"></i> Özel Tasarım</li>
+                            <li><i class="fas fa-check"></i> 24/7 Çalışma</li>
+                            <li><i class="fas fa-check"></i> Uzaktan İzleme</li>
+                        </ul>
+                        <div class="product-price">Özel Fiyat</div>
+                        <a href="#contact" class="btn btn-primary">Teklif Al</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text scroll-reveal">
+                    <h2>Neden Cansuaritma?</h2>
+                    <p>15 yıllık deneyimimizle su arıtma sektöründe öncü firmalardan biri olarak, müşterilerimize en kaliteli hizmeti sunmaya devam ediyoruz.</p>
+                    <p>Uzman ekibimiz, modern teknoloji ve kaliteli ürünlerle evinizde ve işyerinizde temiz, sağlıklı suya ulaşmanızı sağlıyor.</p>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span class="stat-number">5000+</span>
+                            <span class="stat-label">Mutlu Müşteri</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">15</span>
+                            <span class="stat-label">Yıl Deneyim</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">%100</span>
+                            <span class="stat-label">Müşteri Memnuniyeti</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">24/7</span>
+                            <span class="stat-label">Teknik Destek</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image scroll-reveal">
+                    <div class="water-drop">
+                        <i class="fas fa-award" style="font-size: 3rem; color: rgba(255,255,255,0.8); margin-top: 60px;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-title scroll-reveal">
+                <h2>İletişim</h2>
+                <p>Bizimle iletişime geçin, size en uygun çözümü bulalım</p>
+            </div>
+            <div class="contact-content">
+                <div class="contact-info scroll-reveal">
+                    <h3>İletişim Bilgileri</h3>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <strong>Telefon</strong><br>
+                            <a href="tel:05343029948">0534 302 99 48</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <strong>E-posta</strong><br>
+                            info@cansuaritma.com
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <strong>Adres</strong><br>
+                            İstanbul, Türkiye
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <strong>Çalışma Saatleri</strong><br>
+                            Pazartesi - Cumartesi: 09:00 - 18:00
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form scroll-reveal">
+                    <h3>Hızlı İletişim</h3>
+                    <form>
+                        <div class="form-group">
+                            <label for="name">Ad Soyad</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Telefon</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">E-posta</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Mesajınız</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-paper-plane"></i>
+                            Mesaj Gönder
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating Buttons -->
+    <div class="floating-buttons">
+        <a href="#" class="floating-btn search-btn" title="Arama">
+            <i class="fas fa-search"></i>
+        </a>
+        <a href="https://wa.me/905343029948" class="floating-btn whatsapp-btn" title="WhatsApp" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header background change on scroll
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'linear-gradient(135deg, rgba(30, 60, 114, 0.95) 0%, rgba(42, 82, 152, 0.95) 100%)';
+                header.style.backdropFilter = 'blur(20px)';
+            } else {
+                header.style.background = 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)';
+                header.style.backdropFilter = 'blur(10px)';
+            }
+        });
+
+        // Scroll reveal animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Search button functionality
+        document.querySelector('.search-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            const searchTerm = prompt('Aramak istediğiniz kelimeyi girin:');
+            if (searchTerm) {
+                // Simple search functionality
+                const searchableText = document.body.innerText.toLowerCase();
+                const searchLower = searchTerm.toLowerCase();
+                if (searchableText.includes(searchLower)) {
+                    alert(`"${searchTerm}" kelimesi sitede bulundu!`);
+                } else {
+                    alert(`"${searchTerm}" kelimesi sitede bulunamadı.`);
+                }
+            }
+        });
+
+        // Form submission
+        document.querySelector('form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Mesajınız alındı! En kısa sürede size dönüş yapacağız.');
+        });
+
+        // Add some interactive effects
+        document.querySelectorAll('.service-card, .product-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Water drop animation enhancement
+        const waterDrops = document.querySelectorAll('.water-drop');
+        waterDrops.forEach(drop => {
+            drop.addEventListener('click', () => {
+                drop.style.animation = 'none';
+                drop.offsetHeight; // Trigger reflow
+                drop.style.animation = 'float 3s ease-in-out infinite';
+            });
+        });
+    </script>
+</body>
+</html>
