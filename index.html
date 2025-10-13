@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cansu Arıtma | Su Arıtma Sistemleri</title>
+    <meta
+      name="description"
+      content="Cansu Arıtma: Ev ve iş yerleri için profesyonel su arıtma sistemleri. Ücretsiz keşif, hızlı kurulum, ömür boyu destek."
+    />
+    <link rel="canonical" href="https://cansuaritma.com/" />
+    <meta property="og:title" content="Cansu Arıtma | Su Arıtma Sistemleri" />
+    <meta property="og:description" content="Ev ve iş yerleri için profesyonel su arıtma sistemleri. Ücretsiz keşif, hızlı kurulum, ömür boyu destek." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://cansuaritma.com/" />
+    <meta name="theme-color" content="#00B6F3" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+    <style>
+      :root {
+        --brand-50: #e6fbff;
+        --brand-100: #c9f5ff;
+        --brand-200: #9beaff;
+        --brand-300: #63dcff;
+        --brand-400: #28caff;
+        --brand-500: #00b6f3; /* primary */
+        --brand-600: #0096cb;
+        --brand-700: #0076a1;
+        --brand-800: #045b7b;
+        --brand-900: #064c67;
+
+        --accent-500: #00e5a3;
+        --accent-600: #00c189;
+
+        --bg: #0b1220; /* deep night */
+        --card: #0f1a2d;
+        --muted: #7f98b0;
+        --text: #eaf6ff;
+        --shadow: 0 10px 30px rgba(0, 182, 243, 0.18), 0 2px 10px rgba(0, 0, 0, 0.25);
+        --radius: 16px;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        color: var(--text);
+        background: radial-gradient(1200px 800px at 80% -10%, rgba(0, 182, 243, 0.25), transparent 60%),
+                    radial-gradient(900px 700px at -10% 0%, rgba(0, 229, 163, 0.18), transparent 50%),
+                    var(--bg);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      a { color: inherit; text-decoration: none; }
+      img { max-width: 100%; display: block; }
+
+      .container { width: min(1200px, 92%); margin-inline: auto; }
+
+      /* NAV */
+      .nav {
+        position: sticky; top: 0; z-index: 1000;
+        background: rgba(11, 18, 32, 0.7);
+        backdrop-filter: saturate(160%) blur(14px);
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+      }
+      .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; }
+      .brand { display: flex; gap: 12px; align-items: center; font-family: Poppins, Inter, sans-serif; }
+      .brand-logo {
+        width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px;
+        background: linear-gradient(135deg, var(--brand-500), var(--brand-700));
+        box-shadow: var(--shadow);
+      }
+      .brand-name { font-weight: 800; letter-spacing: 0.5px; font-size: 1.2rem; }
+      .brand-sub { display:block; font-size: 0.74rem; color: var(--brand-200); font-weight: 600; margin-top: -2px; }
+
+      .nav-links { display: flex; gap: 20px; align-items: center; }
+      .nav-links a { color: #dbf5ff; opacity: 0.86; font-weight: 600; font-size: 0.98rem; }
+      .nav-links a:hover { opacity: 1; color: #fff; }
+
+      .cta { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 999px;
+             background: linear-gradient(135deg, var(--accent-500), var(--brand-500));
+             color: #04121c; font-weight: 800; box-shadow: var(--shadow); border: 0; cursor: pointer; }
+      .cta svg { transform: translateY(1px); }
+
+      .hamburger { display: none; background: transparent; border: 0; }
+
+      /* HERO */
+      .hero { position: relative; padding: 86px 0 48px; overflow: clip; }
+      .hero-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center; }
+      .eyebrow { color: var(--brand-200); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-size: 0.85rem; }
+      .h1 { font-family: Poppins, Inter, sans-serif; font-weight: 800; line-height: 1.08; margin: 10px 0 16px; font-size: clamp(2rem, 4.2vw, 3.4rem); }
+      .lead { color: #bfeaff; font-size: clamp(1rem, 1.2vw, 1.15rem); opacity: 0.95; }
+      .hero-ctas { display: flex; gap: 14px; margin-top: 22px; flex-wrap: wrap; }
+      .ghost { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 999px; border: 1.5px solid rgba(255,255,255,0.18); color: #e9f8ff; font-weight: 700; }
+
+      .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 26px; }
+      .stat { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; text-align: center; }
+      .stat .num { font-family: Poppins, Inter, sans-serif; font-size: 1.6rem; font-weight: 800; color: #fff; }
+      .stat .lbl { font-size: 0.9rem; color: var(--muted); }
+
+      .hero-media { position: relative; }
+      .device {
+        border-radius: 22px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
+        background: radial-gradient(120% 120% at 80% 20%, rgba(40, 202, 255, 0.25), rgba(0,0,0,0.35)),
+                    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+        box-shadow: 0 30px 70px rgba(0, 182, 243, 0.2), inset 0 1px 0 rgba(255,255,255,0.12);
+        aspect-ratio: 4/3; display: grid; place-items: center; color: #e7fbff;
+      }
+      .hero-blob {
+        position: absolute; inset: -20% -10% auto auto; width: 280px; height: 280px; filter: blur(32px); opacity: 0.5;
+        background: conic-gradient(from 30deg, var(--brand-500), var(--accent-500), transparent 60%);
+        border-radius: 50%;
+        animation: spin 18s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(1turn); } }
+
+      /* SECTIONS */
+      section { padding: 72px 0; position: relative; }
+      .section-head { text-align: center; margin-bottom: 36px; }
+      .section-eyebrow { color: var(--brand-200); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-size: 0.8rem; }
+      .section-title { font-family: Poppins, Inter, sans-serif; font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 8px 0 10px; }
+      .section-lead { color: #cfefff; opacity: 0.85; }
+
+      .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+      .card { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius); padding: 22px; min-height: 180px; box-shadow: var(--shadow); }
+      .card h3 { margin: 10px 0 8px; font-family: Poppins, Inter, sans-serif; }
+      .card p { color: #cdeefe; opacity: 0.9; }
+      .icon {
+        width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px;
+        background: linear-gradient(135deg, rgba(0,182,243,0.25), rgba(0,229,163,0.25));
+        border: 1px solid rgba(255,255,255,0.12);
+      }
+
+      /* Pricing */
+      .pricing { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; align-items: stretch; }
+      .price-card { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 26px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+      .price-card.featured { border-color: rgba(0,182,243,0.4); box-shadow: 0 20px 60px rgba(0, 182, 243, 0.3); }
+      .ribbon { position: absolute; top: 16px; right: -40px; transform: rotate(35deg); background: linear-gradient(135deg, var(--brand-500), var(--brand-700)); color: #04121c; font-weight: 800; padding: 6px 48px; border-radius: 999px; font-size: 0.85rem; }
+      .price { font-size: 2rem; font-weight: 800; font-family: Poppins, Inter, sans-serif; margin: 8px 0 14px; }
+      .features { list-style: none; padding: 0; margin: 0 0 18px; }
+      .features li { display: flex; align-items: center; gap: 10px; margin: 8px 0; color: #d7f1ff; }
+      .features li svg { color: var(--accent-500); }
+
+      /* Testimonials */
+      .testimonials { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+      .quote { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 18px; box-shadow: var(--shadow); }
+      .stars { color: #ffd86b; }
+      .author { color: #c8e7f9; font-weight: 600; margin-top: 6px; }
+
+      /* FAQ */
+      .faq { max-width: 900px; margin: 0 auto; }
+      details { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 16px; margin: 10px 0; }
+      summary { cursor: pointer; font-weight: 700; }
+      details[open] { border-color: rgba(0,182,243,0.3); }
+
+      /* Contact */
+      .contact-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; align-items: stretch; }
+      .contact-card { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); }
+      .contact-row { display: flex; gap: 12px; align-items: center; margin: 10px 0; color: #d7f1ff; }
+
+      /* Footer */
+      footer { padding: 36px 0; border-top: 1px solid rgba(255,255,255,0.06); background: rgba(11,18,32,0.6); backdrop-filter: blur(12px); }
+      .foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+      .foot small { color: #b8d4e8; }
+
+      /* Floating Buttons */
+      .floating-btn { position: fixed; bottom: 18px; width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; color: white; box-shadow: 0 18px 40px rgba(0,0,0,0.35); z-index: 1200; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+      .floating-btn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 22px 50px rgba(0,0,0,0.45); }
+      .whatsapp { right: 18px; background: linear-gradient(135deg, #25D366, #128C7E); }
+      .call { left: 18px; background: linear-gradient(135deg, var(--brand-500), var(--brand-700)); }
+
+      /* Reveal Animation */
+      .reveal { opacity: 0; transform: translateY(18px); transition: all 700ms cubic-bezier(.2,.8,.2,1); }
+      .reveal.visible { opacity: 1; transform: translateY(0); }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .hero-grid { grid-template-columns: 1fr; }
+        .stats { grid-template-columns: repeat(3, 1fr); }
+        .cards, .pricing, .testimonials { grid-template-columns: 1fr 1fr; }
+        .contact-grid { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 680px) {
+        .nav-inner { padding: 12px 0; }
+        .nav-links { display: none; position: absolute; inset: 60px 4% auto; background: rgba(11,18,32,0.95); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; flex-direction: column; gap: 12px; }
+        .nav-links.open { display: flex; }
+        .hamburger { display: inline-flex; }
+        .stats { grid-template-columns: 1fr; }
+        .cards, .pricing, .testimonials { grid-template-columns: 1fr; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .floating-btn:hover { transform: none; }
+        .reveal { transition: none; }
+        .hero-blob { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav class="nav">
+      <div class="container nav-inner">
+        <div class="brand">
+          <div class="brand-logo" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 2C7 2 3 6 3 11C3 16 7 20 12 20C17 20 21 16 21 11" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <path d="M21 11C16 11 16 4 12 4C8 4 8 11 3 11" stroke="white" stroke-opacity="0.8" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="brand-name">CANSU ARITMA</div>
+            <small class="brand-sub">Su Arıtma Sistemleri</small>
+          </div>
+        </div>
+        <div class="nav-links" id="navLinks">
+          <a href="#hizmetler">Hizmetler</a>
+          <a href="#paketler">Paketler</a>
+          <a href="#yorumlar">Yorumlar</a>
+          <a href="#sss">SSS</a>
+          <a href="#iletisim">İletişim</a>
+          <a class="cta" href="tel:+905343029948" aria-label="Hemen Ara">
+            <!-- phone icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22 16.92v2a2 2 0 0 1-2.18 2c-3.18-.35-6.23-1.86-8.54-4.17A19.79 19.79 0 0 1 4.11 8.2 2 2 0 0 1 6.09 6h2a2 2 0 0 1 2 1.72c.12.9.33 1.77.62 2.6a2 2 0 0 1-.45 2.11L9.1 13.91a16 16 0 0 0 6 6l1.47-1.47a2 2 0 0 1 2.11-.45c.83.29 1.7.5 2.6.62A2 2 0 0 1 22 16.92z" fill="#04121c"/></svg>
+            Hemen Ara
+          </a>
+        </div>
+        <button class="hamburger" id="menuBtn" aria-label="Menüyü Aç/Kapat">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="#EAF6FF" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow reveal">Türkiye'nin Güvenilir Su Arıtma Markası</div>
+          <h1 class="h1 reveal" style="animation-delay:80ms">Saf, Lezzetli ve Sağlıklı Su<br />Her Zaman Yanınızda</h1>
+          <p class="lead reveal" style="animation-delay:160ms">Ev ve iş yerleri için ileri teknoloji ters ozmoz sistemleri, profesyonel montaj ve ömür boyu bakım desteği. Ücretsiz keşif ile doğru çözümü birlikte belirleyelim.</p>
+          <div class="hero-ctas reveal" style="animation-delay:240ms">
+            <a class="cta" href="https://wa.me/905343029948?text=Merhaba%20Cansu%20Ar%C4%B1tma%2C%20%C3%BCcretsiz%20ke%C5%9Fif%20talep%20ediyorum." target="_blank" rel="noopener" aria-label="WhatsApp'tan Yazın">
+              <!-- whatsapp icon -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20.52 3.48A11.9 11.9 0 0 0 12.02 0 12 12 0 0 0 0 12a11.9 11.9 0 0 0 3.48 8.5L2 24l3.62-1.43A12.06 12.06 0 0 0 12 24 12 12 0 0 0 24 12c0-3.2-1.25-6.21-3.48-8.52zM12 22a9.9 9.9 0 0 1-5.06-1.38l-.36-.21-2.15.85.82-2.1-.22-.37A10 10 0 1 1 22 12 10 10 0 0 1 12 22zm5.5-7.77c-.3-.15-1.77-.86-2.04-.96s-.47-.15-.68.15-.78.96-.95 1.16-.35.22-.65.07a8.15 8.15 0 0 1-2.4-1.48 9 9 0 0 1-1.66-2.05c-.17-.3 0-.46.13-.61.13-.15.3-.37.45-.56.15-.19.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.68-1.63-.93-2.23-.24-.58-.5-.5-.68-.51h-.58a1.1 1.1 0 0 0-.8.38c-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.07 4.48.71.31 1.26.5 1.69.64.71.22 1.36.19 1.88.11.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.56-.35z" fill="#04121c"/></svg>
+              WhatsApp
+            </a>
+            <a class="ghost" href="#paketler" aria-label="Paketleri Gör">
+              Paketleri Gör
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke="#EAF6FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+          <div class="stats">
+            <div class="stat reveal"><div class="num">10.000+</div><div class="lbl">Mutlu Müşteri</div></div>
+            <div class="stat reveal" style="animation-delay:60ms"><div class="num">12 Yıl</div><div class="lbl">Deneyim</div></div>
+            <div class="stat reveal" style="animation-delay:120ms"><div class="num">7/24</div><div class="lbl">Destek</div></div>
+          </div>
+        </div>
+        <div class="hero-media reveal" style="animation-delay:200ms">
+          <div class="device">
+            <div style="text-align:center; padding: 18px;">
+              <svg width="180" height="180" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="margin-inline:auto; display:block">
+                <path d="M6 3h12a2 2 0 0 1 2 2v11a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V5a2 2 0 0 1 2-2z" stroke="#E6FAFF" stroke-width="1.5"/>
+                <path d="M8 7h8M8 11h8M8 15h6" stroke="#AEEBFF" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M17 20v1a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-1" stroke="#CFF5FF" stroke-width="1.5"/>
+              </svg>
+              <h3 style="margin: 8px 0 6px; font-family:Poppins,Inter,sans-serif">İleri Teknoloji Filtrasyon</h3>
+              <p style="color:#d8f4ff; opacity:.9">Ters ozmoz + aktif karbon + mineral filtre kombinasyonu ile pH dengeli, taze ve lezzetli içme suyu.</p>
+            </div>
+          </div>
+          <div class="hero-blob" aria-hidden="true"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- SERVICES -->
+    <section id="hizmetler">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow reveal">Hizmetler</div>
+          <h2 class="section-title reveal" style="animation-delay:80ms">Her İhtiyaç İçin Su Arıtma Çözümleri</h2>
+          <p class="section-lead reveal" style="animation-delay:160ms">Ev, ofis ve endüstriyel kullanım için güvenilir, uzun ömürlü ve estetik sistemler.</p>
+        </div>
+        <div class="cards">
+          <article class="card reveal">
+            <div class="icon" aria-hidden="true">
+              <!-- drop icon -->
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3.5C12 3.5 6 10 6 14.5C6 17.54 8.46 20 11.5 20C14.54 20 17 17.54 17 14.5C17 10 12 3.5 12 3.5z" stroke="#BFF0FF" stroke-width="1.6"/></svg>
+            </div>
+            <h3>Ev Tipi Sistemler</h3>
+            <p>Kompakt, sessiz ve yüksek verimli cihazlarla mutfağınızda pratik arıtma çözümleri.</p>
+          </article>
+          <article class="card reveal" style="animation-delay:80ms">
+            <div class="icon" aria-hidden="true">
+              <!-- filter icon -->
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16l-6.5 7.5V20l-3-2v-6.5L4 4z" stroke="#BFF0FF" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            </div>
+            <h3>Ofis & İş Yeri</h3>
+            <p>Çalışma alanları için yüksek kapasiteli, hijyenik ve tasarruflu arıtma sistemleri.</p>
+          </article>
+          <article class="card reveal" style="animation-delay:160ms">
+            <div class="icon" aria-hidden="true">
+              <!-- wrench icon -->
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.7 6.3a4.5 4.5 0 1 0-6.36 6.36l6.72 6.72a2 2 0 1 0 2.83-2.83L11.17 9.83" stroke="#BFF0FF" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <h3>Bakım & Servis</h3>
+            <p>Periyodik filtre değişimleri ve 7/24 teknik destek ile kesintisiz performans.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="paketler">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow reveal">Paketler</div>
+          <h2 class="section-title reveal" style="animation-delay:80ms">Bütçenize Uygun Esnek Paketler</h2>
+          <p class="section-lead reveal" style="animation-delay:160ms">Kurulum dahil, gizli masraf yok. Tüm paketlerde ücretsiz keşif ve montaj.</p>
+        </div>
+        <div class="pricing">
+          <article class="price-card reveal">
+            <h3>Başlangıç</h3>
+            <div class="price">₺4.990</div>
+            <ul class="features">
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6 9 17l-5-5" stroke="#00E5A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                5 Aşamalı Filtrasyon
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6 9 17l-5-5" stroke="#00E5A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                12 Ay Garanti
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6 9 17l-5-5" stroke="#00E5A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Ücretsiz Montaj
+              </li>
+            </ul>
+            <a class="cta" href="https://wa.me/905343029948?text=Ba%C5%9Flang%C4%B1%C3%A7%20Paketi%20i%C3%A7in%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener">Teklif Al</a>
+          </article>
+
+          <article class="price-card featured reveal" style="animation-delay:80ms">
+            <div class="ribbon">En Çok Tercih Edilen</div>
+            <h3>Standart</h3>
+            <div class="price">₺6.990</div>
+            <ul class="features">
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6 9 17l-5-5" stroke="#00E5A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                6 Aşamalı Filtrasyon + Mineral
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6 9 17l-5-5" stroke="#00E5A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                24 Ay Garanti
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6 9 17l-5-5" stroke="#00E5A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Yıllık Bakım Dahil
+              </li>
+            </ul>
+            <a class="cta" href="https://wa.me/905343029948?text=Standart%20Paket%20i%C3%A7in%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener">Teklif Al</a>
+          </article>
+
+          <article class="price-card reveal" style="animation-delay:160ms">
+            <h3>Premium</h3>
+            <div class="price">₺9.990</div>
+            <ul class="features">
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6 9 17l-5-5" stroke="#00E5A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                7 Aşamalı + Alkali & UV
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6 9 17l-5-5" stroke="#00E5A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                36 Ay Garanti
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6 9 17l-5-5" stroke="#00E5A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Ömür Boyu Destek
+              </li>
+            </ul>
+            <a class="cta" href="https://wa.me/905343029948?text=Premium%20Paket%20i%C3%A7in%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener">Teklif Al</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="yorumlar">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow reveal">Müşteri Yorumları</div>
+          <h2 class="section-title reveal" style="animation-delay:80ms">Güven, Memnuniyet ve Tavsiye</h2>
+          <p class="section-lead reveal" style="animation-delay:160ms">Binlerce ailenin tercih ettiği sağlıklı su deneyimi.</p>
+        </div>
+        <div class="testimonials">
+          <article class="quote reveal">
+            <div class="stars">★★★★★</div>
+            <p>Kısa sürede kurulum yapıldı, suyun tadı harika. Ekibin ilgisi muhteşem!</p>
+            <div class="author">Ayşe K.</div>
+          </article>
+          <article class="quote reveal" style="animation-delay:80ms">
+            <div class="stars">★★★★★</div>
+            <p>Ofisimiz için aldık, hem ekonomik hem de çok pratik. Herkese tavsiye ederim.</p>
+            <div class="author">Murat D.</div>
+          </article>
+          <article class="quote reveal" style="animation-delay:160ms">
+            <div class="stars">★★★★★</div>
+            <p>Servis ve bakım süreçleri çok düzenli. Profesyonel bir ekip, teşekkürler.</p>
+            <div class="author">Elif S.</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="sss">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow reveal">SSS</div>
+          <h2 class="section-title reveal" style="animation-delay:80ms">Sıkça Sorulan Sorular</h2>
+          <p class="section-lead reveal" style="animation-delay:160ms">Merak ettiklerinizi burada hızlıca cevapladık.</p>
+        </div>
+        <div class="faq">
+          <details class="reveal">
+            <summary>Filtre değişimi ne sıklıkla yapılır?</summary>
+            <p>Ön filtreler 6 ayda bir, post karbon ve mineral filtreler 12 ayda bir; membran 24-36 ayda bir değişir. Kullanıma ve su kalitesine göre değişiklik gösterebilir.</p>
+          </details>
+          <details class="reveal" style="animation-delay:80ms">
+            <summary>Garanti kapsamınız nedir?</summary>
+            <p>Tüm cihazlarımız en az 24 ay garanti kapsamındadır. Düzenli bakım ile ömür boyu performans garantisi sunuyoruz.</p>
+          </details>
+          <details class="reveal" style="animation-delay:160ms">
+            <summary>Kurulum süreciniz nasıl işler?</summary>
+            <p>Ücretsiz keşif sonrası randevu ile aynı gün profesyonel kurulum yapıyoruz. Ortalama kurulum süresi 60-90 dakikadır.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="iletisim">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow reveal">İletişim</div>
+          <h2 class="section-title reveal" style="animation-delay:80ms">Hemen Ulaşın</h2>
+          <p class="section-lead reveal" style="animation-delay:160ms">Ücretsiz keşif ve teklif için bize hemen yazın ya da arayın.</p>
+        </div>
+        <div class="contact-grid">
+          <div class="contact-card reveal">
+            <h3 style="margin-top:0">İletişim Bilgileri</h3>
+            <div class="contact-row">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22 16.92v2a2 2 0 0 1-2.18 2c-3.18-.35-6.23-1.86-8.54-4.17A19.79 19.79 0 0 1 4.11 8.2 2 2 0 0 1 6.09 6h2a2 2 0 0 1 2 1.72c.12.9.33 1.77.62 2.6a2 2 0 0 1-.45 2.11L9.1 13.91a16 16 0 0 0 6 6l1.47-1.47a2 2 0 0 1 2.11-.45c.83.29 1.7.5 2.6.62A2 2 0 0 1 22 16.92z" stroke="#EAF6FF" stroke-width="1.6"/></svg>
+              <a href="tel:+905343029948">+90 534 302 9948</a>
+            </div>
+            <div class="contact-row">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8 4v-4" stroke="#EAF6FF" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <span>Hafta içi 09:00 - 19:00</span>
+            </div>
+            <div class="contact-row">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4 4h16v12H5.17L4 17.17V4z" stroke="#EAF6FF" stroke-width="1.6" stroke-linejoin="round"/></svg>
+              <a href="https://wa.me/905343029948?text=Merhaba%2C%20%C3%BCcretsiz%20ke%C5%9Fif%20talep%20ediyorum." target="_blank" rel="noopener">WhatsApp'tan Yaz</a>
+            </div>
+            <div class="contact-row">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3.1-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" stroke="#EAF6FF" stroke-width="1.6"/></svg>
+              <span>Türkiye Geneli Hizmet</span>
+            </div>
+          </div>
+          <div class="contact-card reveal" style="animation-delay:80ms">
+            <h3 style="margin-top:0">Ücretsiz Keşif Talebi</h3>
+            <form onsubmit="event.preventDefault(); window.open('https://wa.me/905343029948?text='+encodeURIComponent('Merhaba, keşif talep ediyorum. Adım: '+this.ad.value+' | İl/İlçe: '+this.konum.value+' | Not: '+this.not.value),'_blank')">
+              <div style="display:grid; gap:10px;">
+                <input required name="ad" placeholder="Adınız" style="padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.05); color:#fff; outline:none"/>
+                <input required name="konum" placeholder="İl / İlçe" style="padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.05); color:#fff; outline:none"/>
+                <textarea name="not" placeholder="Notunuz" rows="4" style="padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.05); color:#fff; outline:none"></textarea>
+                <button class="cta" type="submit" style="justify-content:center">WhatsApp'tan Gönder</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container foot">
+        <div class="brand" style="gap:10px">
+          <div class="brand-logo" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 2C7 2 3 6 3 11C3 16 7 20 12 20C17 20 21 16 21 11" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="brand-name">CANSU ARITMA</div>
+            <small class="brand-sub">Su Arıtma Sistemleri</small>
+          </div>
+        </div>
+        <small>© <span id="year"></span> Cansu Arıtma. Tüm hakları saklıdır.</small>
+      </div>
+    </footer>
+
+    <!-- Floating WhatsApp & Call Buttons -->
+    <a class="floating-btn whatsapp" href="https://wa.me/905343029948?text=Merhaba%20Cansu%20Ar%C4%B1tma%2C%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener" aria-label="WhatsApp ile mesaj gönder">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20.52 3.48A11.9 11.9 0 0 0 12.02 0 12 12 0 0 0 0 12a11.9 11.9 0 0 0 3.48 8.5L2 24l3.62-1.43A12.06 12.06 0 0 0 12 24 12 12 0 0 0 24 12c0-3.2-1.25-6.21-3.48-8.52zM12 22a9.9 9.9 0 0 1-5.06-1.38l-.36-.21-2.15.85.82-2.1-.22-.37A10 10 0 1 1 22 12 10 10 0 0 1 12 22zm5.5-7.77c-.3-.15-1.77-.86-2.04-.96s-.47-.15-.68.15-.78.96-.95 1.16-.35.22-.65.07a8.15 8.15 0 0 1-2.4-1.48 9 9 0 0 1-1.66-2.05c-.17-.3 0-.46.13-.61.13-.15.3-.37.45-.56.15-.19.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.68-1.63-.93-2.23-.24-.58-.5-.5-.68-.51h-.58a1.1 1.1 0 0 0-.8.38c-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.07 4.48.71.31 1.26.5 1.69.64.71.22 1.36.19 1.88.11.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.56-.35z" fill="#fff"/></svg>
+    </a>
+
+    <a class="floating-btn call" href="tel:+905343029948" aria-label="Telefon ile ara">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22 16.92v2a2 2 0 0 1-2.18 2c-3.18-.35-6.23-1.86-8.54-4.17A19.79 19.79 0 0 1 4.11 8.2 2 2 0 0 1 6.09 6h2a2 2 0 0 1 2 1.72c.12.9.33 1.77.62 2.6a2 2 0 0 1-.45 2.11L9.1 13.91a16 16 0 0 0 6 6l1.47-1.47a2 2 0 0 1 2.11-.45c.83.29 1.7.5 2.6.62A2 2 0 0 1 22 16.92z" fill="#fff"/></svg>
+    </a>
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Cansu Arıtma",
+      "image": "https://cansuaritma.com/logo.png",
+      "url": "https://cansuaritma.com/",
+      "telephone": "+90 534 302 9948",
+      "priceRange": "₺₺",
+      "areaServed": "TR",
+      "sameAs": [
+        "https://wa.me/905343029948"
+      ]
+    }
+    </script>
+
+    <script>
+      // Mobile menu toggle
+      const menuBtn = document.getElementById('menuBtn');
+      const navLinks = document.getElementById('navLinks');
+      menuBtn?.addEventListener('click', () => navLinks.classList.toggle('open'));
+
+      // Reveal on scroll
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+      }, { threshold: 0.12 });
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+      // Year in footer
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
