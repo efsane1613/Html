@@ -540,11 +540,19 @@ function format_datetime(?string $value): string
                                                     <?php if ($authUrl): ?>
                                                         <a class="button button--ghost" href="<?= e($authUrl) ?>" target="_blank" rel="noopener">Yetkilendirme Linki</a>
                                                     <?php endif; ?>
-                                                    <form method="post" class="inline-form">
+                                                    <?php $authorizationFieldId = 'authorization_code_' . $business['id']; ?>
+                                                    <form method="post" class="inline-form inline-form--test" aria-labelledby="<?= $authorizationFieldId ?>_label">
                                                         <input type="hidden" name="action" value="test_connection">
                                                         <input type="hidden" name="business_id" value="<?= $business['id'] ?>">
-                                                        <input type="text" name="authorization_code" class="inline-input" placeholder="Yetkilendirme kodu (opsiyonel)">
-                                                        <button type="submit" class="button button--ghost">Bağlantıyı Test Et</button>
+                                                        <div class="inline-form__header" id="<?= $authorizationFieldId ?>_label">
+                                                            <span class="inline-form__title">Google Bağlantı Testi</span>
+                                                            <p class="inline-form__hint">Yetkilendirme kodu girersen yeni jeton oluşturulur, boş bırakırsan kayıtlı jetonla test yapılır.</p>
+                                                        </div>
+                                                        <div class="inline-form__controls">
+                                                            <label class="sr-only" for="<?= $authorizationFieldId ?>">Yetkilendirme kodu</label>
+                                                            <input type="text" name="authorization_code" id="<?= $authorizationFieldId ?>" class="inline-input" placeholder="Yetkilendirme kodu (opsiyonel)">
+                                                            <button type="submit" class="button">Bağlantıyı Test Et</button>
+                                                        </div>
                                                     </form>
                                                 </div>
                                             </td>
