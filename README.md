@@ -49,7 +49,8 @@ panelden izlemeniz için tasarlandı.
 Panel tek sayfalık bir arayüze sahiptir:
 
 - **Yeni İşletme Ekle:** Google Location kimliği, Google access token ve Gemini API anahtarı gibi zorunlu alanlarla yeni
-  işletme ekleyebilirsiniz.
+  işletme ekleyebilirsiniz. Gemini model alanı boş bırakılırsa sistem otomatik olarak
+  `gemini-2.5-flash-lite-preview-09-2025` modelini kullanır.
 - **İşletme Listesi:** Kayıtlı işletmeler; Google konum kimliği, maskelenmiş erişim token'ı, Gemini anahtarı/modeli ve son
   cron kontrol zamanı ile birlikte listelenir. Aynı blokta çekilen/yanıtlanan/bekleyen yorum adetlerini hızlıca görebilirsiniz.
 - **Yorumlar:** Google'dan çekilen tüm yorumlar ve sistemin gönderdiği yanıtlar listelenir. Yanıt bekleyen yorumlar "Yanıt
@@ -83,6 +84,15 @@ anlık olarak görünür.
 >   ADD COLUMN last_checked_at DATETIME DEFAULT NULL,
 >   ADD COLUMN last_check_fetched INT UNSIGNED NOT NULL DEFAULT 0,
 >   ADD COLUMN last_check_replied INT UNSIGNED NOT NULL DEFAULT 0;
+> ```
+
+> Daha önce eklenen kayıtların Gemini modeli boş veya eski değeri içeriyorsa aşağıdaki sorgu ile
+> varsayılan `gemini-2.5-flash-lite-preview-09-2025` modeline geçirebilirsiniz:
+>
+> ```sql
+> UPDATE businesses
+> SET gemini_model = 'gemini-2.5-flash-lite-preview-09-2025'
+> WHERE gemini_model IS NULL OR gemini_model = '';
 > ```
 
 ## Güvenlik Notları

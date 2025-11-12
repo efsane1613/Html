@@ -54,7 +54,7 @@ class BusinessRepository
             'google_location' => $data['google_location'],
             'google_access_token' => $data['google_access_token'],
             'gemini_api_key' => $data['gemini_api_key'],
-            'gemini_model' => $data['gemini_model'] ?? 'models/gemini-1.0-pro',
+            'gemini_model' => $data['gemini_model'] ?? 'gemini-2.5-flash-lite-preview-09-2025',
         ];
 
         try {
@@ -78,7 +78,7 @@ class BusinessRepository
             'googleLocation' => (string)$row['google_location'],
             'googleAccessToken' => (string)$row['google_access_token'],
             'geminiApiKey' => (string)$row['gemini_api_key'],
-            'geminiModel' => $row['gemini_model'] ?: 'models/gemini-1.0-pro',
+            'geminiModel' => $row['gemini_model'] ?: 'gemini-2.5-flash-lite-preview-09-2025',
             'lastCheckedAt' => $row['last_checked_at'] ?? null,
             'lastCheckFetched' => isset($row['last_check_fetched']) ? (int)$row['last_check_fetched'] : 0,
             'lastCheckReplied' => isset($row['last_check_replied']) ? (int)$row['last_check_replied'] : 0,

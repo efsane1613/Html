@@ -209,7 +209,7 @@ function format_datetime(?string $value): string
                         </div>
                         <div class="form-group">
                             <label for="gemini_model">Gemini Modeli (opsiyonel)</label>
-                            <input type="text" name="gemini_model" id="gemini_model" placeholder="Örn: models/gemini-1.0-pro" <?= $connectionError ? 'disabled' : '' ?>>
+                            <input type="text" name="gemini_model" id="gemini_model" placeholder="Örn: gemini-2.5-flash-lite-preview-09-2025" <?= $connectionError ? 'disabled' : '' ?>>
                         </div>
                         <button type="submit" <?= $connectionError ? 'disabled' : '' ?>>İşletmeyi Kaydet</button>
                     </form>

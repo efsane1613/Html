@@ -37,7 +37,10 @@ class ReviewResponder
         }
 
         $googleClient = new GoogleMyBusinessClient($business['googleAccessToken']);
-        $geminiClient = new GeminiClient($business['geminiApiKey'], $business['geminiModel'] ?? 'models/gemini-1.0-pro');
+        $geminiClient = new GeminiClient(
+            $business['geminiApiKey'],
+            $business['geminiModel'] ?? 'gemini-2.5-flash-lite-preview-09-2025'
+        );
         $promptBuilder = new PromptBuilder();
 
         $reviews = $googleClient->listReviews($business['googleLocation']);

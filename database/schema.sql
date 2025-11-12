@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS businesses (
     google_location VARCHAR(255) NOT NULL,
     google_access_token TEXT NOT NULL,
     gemini_api_key VARCHAR(255) NOT NULL,
-    gemini_model VARCHAR(255) DEFAULT 'models/gemini-1.0-pro',
+    gemini_model VARCHAR(255) DEFAULT 'gemini-2.5-flash-lite-preview-09-2025',
     last_checked_at DATETIME DEFAULT NULL,
     last_check_fetched INT UNSIGNED NOT NULL DEFAULT 0,
     last_check_replied INT UNSIGNED NOT NULL DEFAULT 0,

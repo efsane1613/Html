@@ -9,7 +9,7 @@ class GeminiClient
     private string $apiKey;
     private string $model;
 
-    public function __construct(string $apiKey, string $model = 'models/gemini-1.0-pro')
+    public function __construct(string $apiKey, string $model = 'gemini-2.5-flash-lite-preview-09-2025')
     {
         $this->apiKey = $apiKey;
         $this->model = $model;
