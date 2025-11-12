@@ -204,7 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'test_
         }
 
         if ($accessToken === '') {
-            throw new RuntimeException('Geçerli bir erişim jetonu bulunamadı. Lütfen yetkilendirme kodu girin.');
+            throw new RuntimeException('Geçerli bir erişim jetonu bulunamadı. "Yetkilendirme Linki" ile Google\'a izin verip oluşan kodu girin.');
         }
 
         $googleClient = new GoogleMyBusinessClient($accessToken);

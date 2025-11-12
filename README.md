@@ -66,24 +66,24 @@ Panel tek sayfalık bir arayüze sahiptir:
 2. "OAuth 2.0 Client ID" oluşturun (Web uygulaması veya masaüstü uygulaması olabilir). Panelde kullanacağınız **Client ID** ve
    **Client Secret** değerlerini not alın.
    - Web istemcisi oluştururken aşağıdaki alanları doldurun:
-     - **Authorized redirect URIs:** `https://dybot.com.tr/seo/oauth/callback.php`
+     - **Authorized redirect URIs:** `https://dybot.com.tr/seo/public/oauth/callback.php`
      - **Authorized JavaScript origins:** `https://dybot.com.tr`
      Bu örnek URL'ler projeyi `https://dybot.com.tr/seo/` altına kurduğunuz varsayımıyla verilmiştir. Farklı bir alan adına
      kurulum yaptığınızda panelde görüntülenen varsayılan değerleri Google Cloud Console'da tanımlayın.
-3. OAuth Playground veya kendi yönlendirme URL'niz üzerinden şu kapsamla bir yetkilendirme kodu üretin:
+3. Yönetim panelindeki işletme satırlarında yer alan **Yetkilendirme Linki** ile Google hesabınıza giriş yaparak aşağıdaki kapsama izin verin (OAuth Playground kullanmak istiyorsanız aynı kapsamı manuel de tetikleyebilirsiniz):
 
    ```
    https://www.googleapis.com/auth/business.manage
    ```
 
-   OAuth Playground kullanıyorsanız "Use your own OAuth credentials" seçeneğiyle Client ID/Secret bilgilerinizi girin ve
-   yetkilendirme kodunu kopyalayın.
-4. Google OAuth ekranındaki yönlendirme işleminden sonra sistem `public/oauth/callback.php` sayfasında yetkilendirme kodunu
-   gösterir. Kodu kopyalayıp yönetim panelindeki "Bağlantıyı Test Et" alanına yapıştırarak access/refresh token oluşturabilirsiniz.
-5. Yönetim panelinde işletme eklerken bu kodu girerseniz sistem otomatik olarak access/refresh token değerlerini alır ve Google
-   bağlantısını test eder. Kodu girmeden kaydederseniz daha sonra listedeki **Bağlantıyı Test Et** formuna kodu yapıştırıp
-   bağlantıyı doğrulayabilirsiniz. Test işlemi hem yeni token oluşturur (gerekirse) hem de Google My Business API çağrısının
-   başarılı olduğunu teyit eder.
+   OAuth Playground kullanıyorsanız "Use your own OAuth credentials" seçeneğiyle Client ID/Secret bilgilerinizi girip aynı
+   kapsamla yetkilendirme başlatabilirsiniz.
+4. Google OAuth ekranındaki yönlendirme işleminden sonra sistem `public/oauth/callback.php` sayfasına döner ve erişim/yenileme
+   jetonlarını otomatik olarak veritabanına kaydeder. Panelde ilgili işletme "Bağlı" durumuna geçer ve ekstra işlem yapmanız
+   gerekmez.
+5. Olağanüstü durumlarda (örneğin veritabanı bağlantısı kurulamazsa) callback sayfası yetkilendirme kodunu yine de gösterir.
+   Bu kodu yönetim panelindeki **Bağlantıyı Test Et** alanına yapıştırarak jeton kaydını manuel tamamlayabilirsiniz. Bağlantı
+   testi hem yeni token oluşturur (gerekirse) hem de Google My Business API çağrısının başarılı olduğunu teyit eder.
 
 ## Cron ile Otomasyon
 
