@@ -79,8 +79,26 @@ class BusinessRepository
             'googleAccessToken' => (string)$row['google_access_token'],
             'geminiApiKey' => (string)$row['gemini_api_key'],
             'geminiModel' => $row['gemini_model'] ?: 'models/gemini-1.0-pro',
+            'lastCheckedAt' => $row['last_checked_at'] ?? null,
+            'lastCheckFetched' => isset($row['last_check_fetched']) ? (int)$row['last_check_fetched'] : 0,
+            'lastCheckReplied' => isset($row['last_check_replied']) ? (int)$row['last_check_replied'] : 0,
             'createdAt' => $row['created_at'] ?? null,
             'updatedAt' => $row['updated_at'] ?? null,
         ];
+    }
+
+    public function recordLastCheck(int $businessId, int $fetchedCount, int $repliedCount): void
+    {
+        $stmt = $this->pdo->prepare('UPDATE businesses
+                SET last_checked_at = NOW(),
+                    last_check_fetched = :fetched,
+                    last_check_replied = :replied
+                WHERE id = :id');
+
+        $stmt->execute([
+            'fetched' => $fetchedCount,
+            'replied' => $repliedCount,
+            'id' => $businessId,
+        ]);
     }
 }

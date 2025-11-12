@@ -50,10 +50,11 @@ Panel tek sayfalık bir arayüze sahiptir:
 
 - **Yeni İşletme Ekle:** Google Location kimliği, Google access token ve Gemini API anahtarı gibi zorunlu alanlarla yeni
   işletme ekleyebilirsiniz.
-- **İşletme Listesi:** Kayıtlı işletmelerin listesi görüntülenir. "Yorumları Gör" bağlantısıyla seçtiğiniz işletmeye ait
-  yorum geçmişini açarsınız.
+- **İşletme Listesi:** Kayıtlı işletmeler; Google konum kimliği, maskelenmiş erişim token'ı, Gemini anahtarı/modeli ve son
+  cron kontrol zamanı ile birlikte listelenir. Aynı blokta çekilen/yanıtlanan/bekleyen yorum adetlerini hızlıca görebilirsiniz.
 - **Yorumlar:** Google'dan çekilen tüm yorumlar ve sistemin gönderdiği yanıtlar listelenir. Yanıt bekleyen yorumlar "Yanıt
-  Bekliyor" etiketiyle gösterilir.
+  Bekliyor" etiketiyle gösterilir. Panel üst kısmındaki meta rozetler toplam/yanıtlanan/bekleyen sayılarını ve son kontrol
+  zamanlarını özetler.
 
 ## Cron ile Otomasyon
 
@@ -63,15 +64,26 @@ Google yorumlarını düzenli olarak kontrol etmek için `cron/process_reviews.p
 php cron/process_reviews.php
 ```
 
-Örnek cron kaydı (her 15 dakikada bir):
+Örnek cron kaydı (her 1 dakikada bir):
 
 ```
-*/15 * * * * /usr/bin/php /path/to/project/cron/process_reviews.php >> /var/log/review-cron.log 2>&1
+* * * * * /usr/bin/php /path/to/project/cron/process_reviews.php >> /var/log/review-cron.log 2>&1
 ```
 
 Betiği her çalıştırdığınızda sistem veritabanındaki tüm işletmeleri dolaşır, yeni yorumları kaydeder, gerekirse Gemini ile
 otomatik yanıt oluşturur ve yanıtları Google'a gönderir. İşlenen her adım `storage/app.log` dosyasına JSON formatında
-kaydedilir.
+kaydedilir. Cron betiği ayrıca her işletme için son kontrol zamanını ve ilgili istatistikleri günceller; bu bilgiler panelde
+anlık olarak görünür.
+
+> Halihazırda kurulu bir veritabanınız varsa `businesses` tablosuna aşağıdaki alanları ekleyerek yeni panel istatistiklerini
+> etkinleştirebilirsiniz:
+>
+> ```sql
+> ALTER TABLE businesses
+>   ADD COLUMN last_checked_at DATETIME DEFAULT NULL,
+>   ADD COLUMN last_check_fetched INT UNSIGNED NOT NULL DEFAULT 0,
+>   ADD COLUMN last_check_replied INT UNSIGNED NOT NULL DEFAULT 0;
+> ```
 
 ## Güvenlik Notları
 

@@ -5,6 +5,9 @@ CREATE TABLE IF NOT EXISTS businesses (
     google_access_token TEXT NOT NULL,
     gemini_api_key VARCHAR(255) NOT NULL,
     gemini_model VARCHAR(255) DEFAULT 'models/gemini-1.0-pro',
+    last_checked_at DATETIME DEFAULT NULL,
+    last_check_fetched INT UNSIGNED NOT NULL DEFAULT 0,
+    last_check_replied INT UNSIGNED NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

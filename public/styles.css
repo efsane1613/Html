@@ -120,6 +120,16 @@ body {
     background: rgba(59, 130, 246, 0.35);
 }
 
+.meta-pill--success {
+    background: rgba(34, 197, 94, 0.28);
+    color: #bbf7d0;
+}
+
+.meta-pill--warning {
+    background: rgba(234, 179, 8, 0.28);
+    color: #fef08a;
+}
+
 .content {
     display: flex;
     flex-direction: column;
@@ -303,6 +313,94 @@ button:disabled {
     color: var(--text-main);
 }
 
+.table-subtitle {
+    display: block;
+    font-size: 0.82rem;
+    color: #64748b;
+    margin-top: 0.35rem;
+}
+
+.definition-list {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+}
+
+.definition-list__item {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.definition-list dt {
+    margin: 0;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #475569;
+    font-weight: 700;
+}
+
+.definition-list dd {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #0f172a;
+}
+
+code {
+    background: rgba(148, 163, 184, 0.18);
+    color: #0f172a;
+    padding: 0.2rem 0.4rem;
+    border-radius: var(--radius-sm);
+    font-family: 'Fira Code', 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    font-size: 0.82rem;
+    display: inline-flex;
+    align-items: center;
+    word-break: break-all;
+}
+
+.stat-chip {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.55rem 0.85rem;
+    background: rgba(59, 130, 246, 0.08);
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.45rem;
+    min-width: 120px;
+}
+
+.stat-chip__value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.1;
+}
+
+.stat-chip__label {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #475569;
+    font-weight: 600;
+}
+
+.stat-chip--success {
+    background: rgba(34, 197, 94, 0.12);
+}
+
+.stat-chip--success .stat-chip__value {
+    color: #16a34a;
+}
+
+.stat-chip--warning {
+    background: rgba(234, 179, 8, 0.12);
+}
+
+.stat-chip--warning .stat-chip__value {
+    color: #ca8a04;
+}
+
 .link {
     color: var(--primary);
     font-weight: 600;
@@ -467,5 +565,14 @@ button:disabled {
 
     .table {
         min-width: auto;
+    }
+
+    .stat-chip {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .definition-list {
+        grid-template-columns: 1fr;
     }
 }

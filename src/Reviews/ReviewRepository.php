@@ -29,6 +29,60 @@ class ReviewRepository
         return array_map([$this, 'mapRow'], $rows);
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function statsByBusiness(): array
+    {
+        $sql = 'SELECT business_id,
+                       COUNT(*) AS total_reviews,
+                       SUM(CASE WHEN reply_text IS NOT NULL AND reply_text <> "" THEN 1 ELSE 0 END) AS replied_reviews,
+                       SUM(CASE WHEN reply_text IS NULL OR reply_text = "" THEN 1 ELSE 0 END) AS pending_reviews,
+                       MAX(review_update_time) AS last_review_time,
+                       MAX(replied_at) AS last_reply_time
+                FROM review_logs
+                GROUP BY business_id';
+
+        $stmt = $this->pdo->query($sql);
+        $rows = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
+
+        $stats = [];
+        foreach ($rows as $row) {
+            $stats[(int)$row['business_id']] = $this->mapStatsRow($row);
+        }
+
+        return $stats;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function statsForBusiness(int $businessId): array
+    {
+        $sql = 'SELECT business_id,
+                       COUNT(*) AS total_reviews,
+                       SUM(CASE WHEN reply_text IS NOT NULL AND reply_text <> "" THEN 1 ELSE 0 END) AS replied_reviews,
+                       SUM(CASE WHEN reply_text IS NULL OR reply_text = "" THEN 1 ELSE 0 END) AS pending_reviews,
+                       MAX(review_update_time) AS last_review_time,
+                       MAX(replied_at) AS last_reply_time
+                FROM review_logs
+                WHERE business_id = :business_id
+                GROUP BY business_id';
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['business_id' => $businessId]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+
+        return $row ? $this->mapStatsRow($row) : [
+            'total' => 0,
+            'replied' => 0,
+            'pending' => 0,
+            'last_review_time' => null,
+            'last_reply_time' => null,
+        ];
+    }
+
     public function findByGoogleName(int $businessId, string $googleReviewName): ?array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM review_logs WHERE business_id = :business_id AND google_review_name = :google_review_name');
@@ -149,6 +203,21 @@ class ReviewRepository
             'raw_review' => $row['raw_review'],
             'created_at' => $row['created_at'],
             'updated_at' => $row['updated_at'],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $row
+     * @return array<string, mixed>
+     */
+    private function mapStatsRow(array $row): array
+    {
+        return [
+            'total' => isset($row['total_reviews']) ? (int)$row['total_reviews'] : 0,
+            'replied' => isset($row['replied_reviews']) ? (int)$row['replied_reviews'] : 0,
+            'pending' => isset($row['pending_reviews']) ? (int)$row['pending_reviews'] : 0,
+            'last_review_time' => $row['last_review_time'] ?? null,
+            'last_reply_time' => $row['last_reply_time'] ?? null,
         ];
     }
 

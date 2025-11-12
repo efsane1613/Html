@@ -21,7 +21,10 @@ class ReviewResponder
     /**
      * @param array<string, mixed> $business
      */
-    public function handleBusiness(array $business): void
+    /**
+     * @return array{fetched:int,replied:int}
+     */
+    public function handleBusiness(array $business): array
     {
         $businessId = (int)$business['id'];
 
@@ -38,6 +41,7 @@ class ReviewResponder
         $promptBuilder = new PromptBuilder();
 
         $reviews = $googleClient->listReviews($business['googleLocation']);
+        $replyCount = 0;
 
         foreach ($reviews as $review) {
             $reviewName = $review['name'] ?? null;
@@ -72,6 +76,13 @@ class ReviewResponder
                 'reviewName' => $reviewName,
                 'reply' => $reply,
             ]);
+
+            $replyCount++;
         }
+
+        return [
+            'fetched' => count($reviews),
+            'replied' => $replyCount,
+        ];
     }
 }

@@ -26,7 +26,13 @@ try {
     $businesses = $businessRepository->all();
     foreach ($businesses as $business) {
         $logger->info('Processing business', ['businessId' => $business['id']]);
-        $reviewResponder->handleBusiness($business);
+        $result = $reviewResponder->handleBusiness($business);
+        $businessRepository->recordLastCheck($business['id'], $result['fetched'], $result['replied']);
+        $logger->info('Business processed', [
+            'businessId' => $business['id'],
+            'fetched' => $result['fetched'],
+            'replied' => $result['replied'],
+        ]);
     }
 } catch (\Throwable $exception) {
     $logger->error('Processing failed', [

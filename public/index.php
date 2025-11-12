@@ -83,10 +83,50 @@ $businesses = $businessRepository ? $businessRepository->all() : [];
 $selectedBusinessId = isset($_GET['business_id']) ? (int)$_GET['business_id'] : null;
 $selectedBusiness = ($businessRepository && $selectedBusinessId) ? $businessRepository->find($selectedBusinessId) : null;
 $reviews = ($reviewRepository && $selectedBusiness) ? $reviewRepository->forBusiness($selectedBusinessId) : [];
+$businessStats = $reviewRepository ? $reviewRepository->statsByBusiness() : [];
+$selectedStats = ($reviewRepository && $selectedBusiness)
+    ? $reviewRepository->statsForBusiness($selectedBusinessId)
+    : [
+        'total' => 0,
+        'replied' => 0,
+        'pending' => 0,
+        'last_review_time' => null,
+        'last_reply_time' => null,
+    ];
 
 function e(?string $value): string
 {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+function mask_token(?string $value, int $prefix = 4, int $suffix = 4): string
+{
+    $value = (string)$value;
+    if ($value === '') {
+        return '';
+    }
+
+    $length = strlen($value);
+    if ($length <= $prefix + $suffix) {
+        return str_repeat('•', max(1, $length));
+    }
+
+    $maskedLength = $length - ($prefix + $suffix);
+
+    return substr($value, 0, $prefix) . str_repeat('•', $maskedLength) . substr($value, -$suffix);
+}
+
+function format_datetime(?string $value): string
+{
+    if (!$value) {
+        return '-';
+    }
+
+    try {
+        return (new DateTimeImmutable($value))->format('d.m.Y H:i');
+    } catch (Exception $exception) {
+        return $value;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -108,6 +148,7 @@ function e(?string $value): string
                 </div>
             </div>
             <div class="header-meta">
+                <span class="meta-pill">⏱ Cron: 1 dk</span>
                 <span class="meta-pill">İzlenen işletme: <?= count($businesses) ?></span>
                 <?php if ($selectedBusiness): ?>
                     <span class="meta-pill meta-pill--active">Seçili: <?= e($selectedBusiness['name']) ?></span>
@@ -192,20 +233,70 @@ function e(?string $value): string
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Adı</th>
-                                        <th>Google Konumu</th>
-                                        <th>Oluşturulma</th>
+                                        <th>İşletme</th>
+                                        <th>Bağlantı Bilgileri</th>
+                                        <th>Yorum Durumu</th>
+                                        <th>Son Kontroller</th>
                                         <th>İşlemler</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($businesses as $business): ?>
+                                        <?php
+                                        $stats = $businessStats[$business['id']] ?? [
+                                            'total' => 0,
+                                            'replied' => 0,
+                                            'pending' => 0,
+                                            'last_review_time' => null,
+                                            'last_reply_time' => null,
+                                        ];
+                                        ?>
                                         <tr class="<?= $selectedBusiness && $selectedBusiness['id'] === $business['id'] ? 'is-active' : '' ?>">
                                             <td>
                                                 <span class="table-title"><?= e($business['name']) ?></span>
+                                                <span class="table-subtitle">Eklenme: <?= format_datetime($business['createdAt'] ?? null) ?></span>
                                             </td>
-                                            <td><code><?= e($business['googleLocation']) ?></code></td>
-                                            <td><?= e($business['createdAt']) ?></td>
+                                            <td>
+                                                <dl class="definition-list">
+                                                    <div class="definition-list__item">
+                                                        <dt>Google Konum</dt>
+                                                        <dd><code><?= e($business['googleLocation']) ?></code></dd>
+                                                    </div>
+                                                    <div class="definition-list__item">
+                                                        <dt>Google Token</dt>
+                                                        <dd><code title="<?= e($business['googleAccessToken']) ?>"><?= e(mask_token($business['googleAccessToken'])) ?></code></dd>
+                                                    </div>
+                                                    <div class="definition-list__item">
+                                                        <dt>Gemini API</dt>
+                                                        <dd><code title="<?= e($business['geminiApiKey']) ?>"><?= e(mask_token($business['geminiApiKey'])) ?></code></dd>
+                                                    </div>
+                                                    <div class="definition-list__item">
+                                                        <dt>Model</dt>
+                                                        <dd><?= e($business['geminiModel']) ?></dd>
+                                                    </div>
+                                                </dl>
+                                            </td>
+                                            <td>
+                                                <div class="stat-chip">
+                                                    <span class="stat-chip__value"><?= $stats['total'] ?></span>
+                                                    <span class="stat-chip__label">Toplam</span>
+                                                </div>
+                                                <div class="stat-chip stat-chip--success">
+                                                    <span class="stat-chip__value"><?= $stats['replied'] ?></span>
+                                                    <span class="stat-chip__label">Yanıtlanan</span>
+                                                </div>
+                                                <div class="stat-chip stat-chip--warning">
+                                                    <span class="stat-chip__value"><?= $stats['pending'] ?></span>
+                                                    <span class="stat-chip__label">Bekleyen</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="table-title">Son Cron: <?= format_datetime($business['lastCheckedAt'] ?? null) ?></div>
+                                                <div class="table-subtitle">Son Google Yorumu: <?= format_datetime($stats['last_review_time'] ?? null) ?></div>
+                                                <div class="table-subtitle">Son Yanıt: <?= format_datetime($stats['last_reply_time'] ?? null) ?></div>
+                                                <div class="table-subtitle">Son Çekilen Adet: <?= $business['lastCheckFetched'] ?></div>
+                                                <div class="table-subtitle">Son Yanıtlanan Adet: <?= $business['lastCheckReplied'] ?></div>
+                                            </td>
                                             <td><a class="link" href="?business_id=<?= $business['id'] ?>">Yorumları Gör</a></td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -224,7 +315,14 @@ function e(?string $value): string
                             <p>Çekilen yorumlar ve bot tarafından verilen yanıtlar burada listelenir.</p>
                         </div>
                         <div class="panel__meta">
-                            <span class="meta-pill">Toplam Yorum: <?= count($reviews) ?></span>
+                            <span class="meta-pill">Toplam: <?= $selectedStats['total'] ?></span>
+                            <span class="meta-pill meta-pill--success">Yanıtlanan: <?= $selectedStats['replied'] ?></span>
+                            <span class="meta-pill meta-pill--warning">Bekleyen: <?= $selectedStats['pending'] ?></span>
+                            <span class="meta-pill">Son Çekilen: <?= $selectedBusiness['lastCheckFetched'] ?? 0 ?></span>
+                            <span class="meta-pill">Son Yanıtlanan: <?= $selectedBusiness['lastCheckReplied'] ?? 0 ?></span>
+                            <span class="meta-pill">Son Google Yorumu: <?= format_datetime($selectedStats['last_review_time'] ?? null) ?></span>
+                            <span class="meta-pill">Son Yanıt: <?= format_datetime($selectedStats['last_reply_time'] ?? null) ?></span>
+                            <span class="meta-pill meta-pill--active">Son Kontrol: <?= format_datetime($selectedBusiness['lastCheckedAt'] ?? null) ?></span>
                         </div>
                     </div>
 
