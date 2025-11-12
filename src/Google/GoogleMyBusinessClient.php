@@ -26,28 +26,41 @@ class GoogleMyBusinessClient
     public function listReviews(string $locationName): array
     {
         $resolvedLocation = $this->resolveLocationName($locationName);
-        $query = http_build_query([
-            'orderBy' => 'updateTime desc',
-            'pageSize' => 100,
-        ], '', '&', PHP_QUERY_RFC3986);
+        $reviews = [];
+        $pageToken = null;
 
-        $url = sprintf(
-            'https://mybusiness.googleapis.com/v4/%s/reviews?%s',
-            $this->encodePath($resolvedLocation),
-            $query
-        );
+        do {
+            $query = http_build_query(array_filter([
+                'orderBy' => 'updateTime desc',
+                'pageSize' => 100,
+                'pageToken' => $pageToken,
+            ]), '', '&', PHP_QUERY_RFC3986);
 
-        try {
-            $response = $this->request('GET', $url);
-        } catch (RuntimeException $exception) {
-            if (str_contains($exception->getMessage(), 'status 404')) {
-                throw new RuntimeException('Google konum kimliği bulunamadı. Business Profile hesabında görünen accounts/.../locations/... formatındaki değerle eşleşen bir kayıt bulunamadı.');
+            $url = sprintf(
+                'https://mybusiness.googleapis.com/v4/%s/reviews?%s',
+                $this->encodePath($resolvedLocation),
+                $query
+            );
+
+            try {
+                $response = $this->request('GET', $url);
+            } catch (RuntimeException $exception) {
+                if (str_contains($exception->getMessage(), 'status 404')) {
+                    throw new RuntimeException('Google konum kimliği bulunamadı. Business Profile hesabında görünen accounts/.../locations/... formatındaki değerle eşleşen bir kayıt bulunamadı.');
+                }
+
+                throw $exception;
             }
 
-            throw $exception;
-        }
+            $pageReviews = $response['reviews'] ?? [];
+            if (is_array($pageReviews) && $pageReviews !== []) {
+                $reviews = array_merge($reviews, $pageReviews);
+            }
 
-        return $response['reviews'] ?? [];
+            $pageToken = isset($response['nextPageToken']) ? (string)$response['nextPageToken'] : null;
+        } while ($pageToken);
+
+        return $reviews;
     }
 
     public function replyToReview(string $reviewName, string $comment): void

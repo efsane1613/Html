@@ -211,6 +211,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'test_
         $reviews = $googleClient->listReviews($business['googleLocation']);
         $resolvedLocation = $googleClient->getLastResolvedLocationName();
         $locationNote = '';
+        $syncedCount = 0;
+        $syncErrors = [];
 
         if ($resolvedLocation && $resolvedLocation !== $business['googleLocation']) {
             $businessRepository->updateGoogleLocation($businessId, $resolvedLocation);
@@ -218,15 +220,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'test_
             $locationNote = sprintf(" Konum kaydı \"%s\" olarak güncellendi.", $resolvedLocation);
         }
 
+        if ($reviewRepository) {
+            foreach ($reviews as $review) {
+                try {
+                    $storedReview = $reviewRepository->upsertReview($businessId, $review);
+
+                    if (!empty($review['reviewReply']['comment'])) {
+                        $reviewRepository->recordReply(
+                            $storedReview['id'],
+                            (string)$review['reviewReply']['comment'],
+                            $review['reviewReply']['updateTime'] ?? $review['reviewReply']['createTime'] ?? null,
+                            'google'
+                        );
+                    }
+
+                    $syncedCount++;
+                } catch (\Throwable $reviewException) {
+                    $syncErrors[] = $reviewException->getMessage();
+                }
+            }
+        }
+
+        $statusMessage = sprintf('Bağlantı başarılı. %d adet yorum okunabildi.', count($reviews));
+        if ($locationNote !== '') {
+            $statusMessage .= ' Konum kaydı doğrulandı.';
+        }
+        if ($reviewRepository) {
+            $statusMessage .= sprintf(' %d yorum panel ile senkronize edildi.', $syncedCount);
+            if ($syncErrors !== []) {
+                $statusMessage .= ' Bazı yorumlar kaydedilirken hata oluştu.';
+            }
+        }
+
         $businessRepository->updateConnectionStatus(
             $businessId,
             'connected',
-            sprintf('Bağlantı başarılı. %d adet yorum okunabildi.', count($reviews)) . ($locationNote !== '' ? ' Konum kaydı doğrulandı.' : '')
+            $statusMessage
         );
 
         $_SESSION['flash_success'] = 'Google bağlantısı başarıyla test edildi.' . $locationNote;
         if ($authorizationCode !== '') {
             $_SESSION['flash_success'] .= ' Yeni jetonlar kaydedildi.';
+        }
+        if ($reviewRepository) {
+            $_SESSION['flash_success'] .= sprintf(' %d yorum panelde güncellendi.', $syncedCount);
+        }
+        if ($syncErrors !== []) {
+            $_SESSION['flash_error'] = 'Bazı yorumlar kaydedilemedi: ' . $syncErrors[0];
         }
     } catch (\Throwable $exception) {
         $businessRepository?->updateConnectionStatus($businessId, 'error', $exception->getMessage());
