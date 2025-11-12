@@ -40,8 +40,9 @@ panelden izlemeniz için tasarlandı.
    ```
 
 4. Web sunucunuzu `public/` klasörüne yönlendirin (ör. Nginx `root` veya Apache `DocumentRoot`).
-5. Admin paneline girerek (ör. `http://localhost/index.php`) yeni işletmelerinizi ekleyin. Google erişim jetonu ve Gemini API
-   anahtarlarını panel üzerinden kaydedin.
+5. `http://localhost/login.php` adresine giderek giriş yapın. Varsayılan kullanıcı adı/şifre **admin / admin**'dir.
+6. Başarılı girişten sonra yönetim paneli açılır; Google erişim jetonu ve Gemini API anahtarlarını panel üzerinden
+   kaydedebilirsiniz.
 
 ## Admin Paneli
 
@@ -77,7 +78,8 @@ kaydedilir.
 - Google ve Gemini kimlik bilgilerini yönetim paneline girerken dikkatli olun; erişimi sadece yetkili kişilere verin.
 - Örnek uygulama, kimlik bilgilerini düz metin olarak saklar. Üretim ortamında şifreleme veya gizli değişken yönetimi
   (Secret Manager, Vault vb.) tercih edin.
-- Admin paneli temel doğrulama içermez. Üretimde kimlik doğrulama ekleyin ve HTTPS kullanın.
+- Panel varsayılan olarak "admin / admin" bilgileriyle giriş sağlar. Canlı ortamda şifreyi değiştirip ek güvenlik
+  katmanları (IP kısıtlama, 2FA vb.) eklemeniz önerilir.
 
 ## Özelleştirme
 

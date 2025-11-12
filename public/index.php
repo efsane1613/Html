@@ -7,6 +7,18 @@ use App\Reviews\ReviewRepository;
 
 session_start();
 
+if (isset($_GET['logout'])) {
+    session_unset();
+    session_destroy();
+    header('Location: /login.php?logged_out=1');
+    exit;
+}
+
+if (empty($_SESSION['authenticated'])) {
+    header('Location: /login.php');
+    exit;
+}
+
 $databaseConfig = require __DIR__ . '/../config/database.php';
 $errors = [];
 $connectionError = null;
@@ -99,6 +111,9 @@ function e(?string $value): string
                 <?php if ($selectedBusiness): ?>
                     <span class="meta-pill meta-pill--active">Seçili: <?= e($selectedBusiness['name']) ?></span>
                 <?php endif; ?>
+            </div>
+            <div class="header-actions">
+                <a href="?logout=1" class="logout-button" aria-label="Çıkış yap">Çıkış Yap</a>
             </div>
         </header>
 
