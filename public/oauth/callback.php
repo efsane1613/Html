@@ -28,6 +28,7 @@ $business = null;
 $tokenStored = false;
 $tokenError = null;
 $tokenMessage = null;
+$oauthErrorHint = null;
 
 try {
     $databaseConfig = require __DIR__ . '/../../config/database.php';
@@ -52,7 +53,18 @@ if ($error !== '' && isset($businessRepository, $business) && $businessId !== nu
         $message .= ' - ' . $errorDescription;
     }
 
+    if ($error === 'access_denied') {
+        $oauthErrorHint = 'Google bu isteği reddetti. OAuth izin ekranında hesabınızı test kullanıcısı olarak ekleyin veya uygulamayı yayınlayarak alan adınızı doğrulayın.';
+
+        if ($errorDescription !== '' && (stripos($errorDescription, 'verify') !== false || stripos($errorDescription, 'verified') !== false)) {
+            $oauthErrorHint .= ' Google Cloud Console &rarr; OAuth consent screen sayfasında "Test users" bölümüne giriş yaptığınız hesabı ekleyip alan doğrulamasını tamamladığınızdan emin olun.';
+        }
+
+        $message .= ' (Google hesabınız yetkilendirmeyi reddetti. Test kullanıcısı listesine eklendiğinizden ve uygulamanın doğrulama aşamasını geçtiğinden emin olun.)';
+    }
+
     $businessRepository->updateConnectionStatus($businessId, 'error', $message);
+    $_SESSION['flash_error'] = $message;
 }
 
 if ($code !== '' && $business && isset($businessRepository) && $businessId !== null) {
@@ -132,6 +144,9 @@ function e(?string $value): string
                     <?php endif; ?>
                 </div>
                 <p class="login-hint">Google Cloud Console ayarlarını kontrol edip yeniden dene.</p>
+                <?php if ($oauthErrorHint !== null): ?>
+                    <div class="alert alert-info"><?= e($oauthErrorHint) ?></div>
+                <?php endif; ?>
             <?php elseif ($code === ''): ?>
                 <div class="alert alert-warning">Google OAuth yanıtında yetkilendirme kodu bulunamadı.</div>
                 <p class="login-hint">OAuth istemcini kontrol edip bağlantıyı tekrar dene.</p>

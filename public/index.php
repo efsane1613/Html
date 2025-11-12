@@ -363,6 +363,10 @@ function format_datetime(?string $value): string
                         <div class="alert alert-success"><?= e($success) ?></div>
                     <?php endif; ?>
 
+                    <div class="alert alert-info">
+                        <strong>Google OAuth hatırlatması:</strong> OAuth istemcisi test modundaysa Google Cloud Console &rarr; <em>OAuth consent screen</em> sayfasındaki <em>Test users</em> bölümüne yetkilendirme yapacak Google hesaplarını ekleyin. Alan doğrulamasını tamamlamadan herkese açık erişim sağlanmaz ve Google <code>access_denied</code> hatası döndürür.
+                    </div>
+
                     <form method="post" class="form">
                         <input type="hidden" name="action" value="add_business">
                         <div class="form-group">

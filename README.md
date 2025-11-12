@@ -78,6 +78,7 @@ Panel tek sayfalık bir arayüze sahiptir:
 
    OAuth Playground kullanıyorsanız "Use your own OAuth credentials" seçeneğiyle Client ID/Secret bilgilerinizi girip aynı
    kapsamla yetkilendirme başlatabilirsiniz.
+   > **Önemli:** OAuth istemciniz "Testing" modundaysa Google Cloud Console &rarr; **OAuth consent screen** sayfasındaki **Test users** bölümüne yetkilendirme yapacak Google hesaplarını ekleyin. Alan adınız doğrulanmadıysa Google yetkilendirmeyi engelleyerek `access_denied` hatası gösterir. Tüm kullanıcıların erişebilmesi için alan doğrulamasını tamamlayıp uygulamayı "In production" durumuna taşıyın.
 4. Google OAuth ekranındaki yönlendirme işleminden sonra sistem `public/oauth/callback.php` sayfasına döner ve erişim/yenileme
    jetonlarını otomatik olarak veritabanına kaydeder. Panelde ilgili işletme "Bağlı" durumuna geçer ve ekstra işlem yapmanız
    gerekmez.

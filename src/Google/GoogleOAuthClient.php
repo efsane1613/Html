@@ -108,6 +108,22 @@ class GoogleOAuthClient
         curl_close($ch);
 
         if ($status >= 400) {
+            $decodedError = json_decode($result, true);
+            if (is_array($decodedError) && isset($decodedError['error'])) {
+                $error = (string)$decodedError['error'];
+                $description = isset($decodedError['error_description']) ? (string)$decodedError['error_description'] : '';
+                $message = sprintf('Google OAuth request returned status %d: %s', $status, $error);
+                if ($description !== '') {
+                    $message .= ' - ' . $description;
+                }
+
+                if (($error === 'access_denied' || stripos($description, 'access_denied') !== false) && stripos($description, 'verify') !== false) {
+                    $message .= ' (Google Cloud Console üzerinde alan doğrulamasını tamamlayın ve yetkilendirme yapacak hesabı OAuth consent screen > Test users listesine ekleyin.)';
+                }
+
+                throw new RuntimeException($message);
+            }
+
             throw new RuntimeException(sprintf('Google OAuth request returned status %d: %s', $status, $result));
         }
 
