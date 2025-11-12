@@ -86,6 +86,17 @@ Panel tek sayfalık bir arayüze sahiptir:
    Bu kodu yönetim panelindeki **Bağlantıyı Test Et** alanına yapıştırarak jeton kaydını manuel tamamlayabilirsiniz. Bağlantı
    testi hem yeni token oluşturur (gerekirse) hem de Google My Business API çağrısının başarılı olduğunu teyit eder.
 
+### Google Konum Kimliği Nasıl Bulunur?
+
+- Business Profile API her konumu `accounts/{hesapId}/locations/{konumId}` biçiminde tanımlar. Paneldeki **Google Konum Kimliği**
+  alanına bu tam kaynak adını girmeniz gerekir.
+- Eğer sadece Google Haritalar bağlantısı ya da `ChIJ...` ile başlayan bir Place ID biliyorsanız, yetkilendirmeyi tamamladıktan
+  sonra **Bağlantıyı Test Et** butonuna basın. Sistem erişiminiz olan tüm hesap/konumları Business Profile API üzerinden tarar ve
+  Place ID veya sayısal konum ID'si eşleşirse kaydı otomatik olarak `accounts/.../locations/...` formatına dönüştürür.
+- Hiçbir eşleşme bulunamazsa Google `404 Not Found` döndürür ve panel size doğru konum kimliğini nasıl edinebileceğinizi
+  hatırlatır. Bu durumda Business Profile API'den `accounts.locations.list` endpoint'iyle hesabınızdaki konumları inceleyip doğru
+  kaynak adını kopyalayabilirsiniz.
+
 ## Cron ile Otomasyon
 
 Google yorumlarını düzenli olarak kontrol etmek için `cron/process_reviews.php` betiğini kullanın:

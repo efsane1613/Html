@@ -7,6 +7,13 @@ use RuntimeException;
 class GoogleMyBusinessClient
 {
     private string $accessToken;
+    /** @var array<string, string> */
+    private array $locationCache = [];
+    /** @var array<int, array<string, mixed>>|null */
+    private ?array $cachedAccounts = null;
+    /** @var array<string, array<int, array<string, mixed>>> */
+    private array $locationsCache = [];
+    private ?string $lastResolvedLocationName = null;
 
     public function __construct(string $accessToken)
     {
@@ -18,6 +25,7 @@ class GoogleMyBusinessClient
      */
     public function listReviews(string $locationName): array
     {
+        $resolvedLocation = $this->resolveLocationName($locationName);
         $query = http_build_query([
             'orderBy' => 'updateTime desc',
             'pageSize' => 100,
@@ -25,10 +33,19 @@ class GoogleMyBusinessClient
 
         $url = sprintf(
             'https://mybusiness.googleapis.com/v4/%s/reviews?%s',
-            $this->encodePath($locationName),
+            $this->encodePath($resolvedLocation),
             $query
         );
-        $response = $this->request('GET', $url);
+
+        try {
+            $response = $this->request('GET', $url);
+        } catch (RuntimeException $exception) {
+            if (str_contains($exception->getMessage(), 'status 404')) {
+                throw new RuntimeException('Google konum kimliği bulunamadı. Business Profile hesabında görünen accounts/.../locations/... formatındaki değerle eşleşen bir kayıt bulunamadı.');
+            }
+
+            throw $exception;
+        }
 
         return $response['reviews'] ?? [];
     }
@@ -99,5 +116,194 @@ class GoogleMyBusinessClient
     {
         $segments = array_map('rawurlencode', explode('/', $path));
         return implode('/', $segments);
+    }
+
+    private function resolveLocationName(string $locationIdentifier): string
+    {
+        $identifier = trim($locationIdentifier);
+
+        if ($identifier === '') {
+            throw new RuntimeException('Google konum kimliği boş olamaz.');
+        }
+
+        $cacheKey = strtolower($identifier);
+        if (isset($this->locationCache[$identifier])) {
+            return $this->setLastResolvedLocation($this->locationCache[$identifier]);
+        }
+
+        if (isset($this->locationCache[$cacheKey])) {
+            return $this->setLastResolvedLocation($this->locationCache[$cacheKey]);
+        }
+
+        $candidate = $this->extractLocationCandidate($identifier);
+        $candidateKey = strtolower($candidate);
+
+        if (isset($this->locationCache[$candidate])) {
+            return $this->setLastResolvedLocation($this->locationCache[$candidate]);
+        }
+
+        if (isset($this->locationCache[$candidateKey])) {
+            return $this->setLastResolvedLocation($this->locationCache[$candidateKey]);
+        }
+
+        $potentialResources = array_values(array_unique(array_filter([
+            $identifier,
+            $candidate,
+        ])));
+
+        $accounts = $this->listAccounts();
+        if (!$accounts) {
+            throw new RuntimeException('Google Business Profile hesabı bulunamadı. OAuth izinlerini kontrol edin.');
+        }
+
+        foreach ($accounts as $account) {
+            $accountName = $account['name'] ?? null;
+            if (!$accountName) {
+                continue;
+            }
+
+            $locations = $this->listLocationsForAccount($accountName);
+
+            foreach ($locations as $location) {
+                $name = $location['name'] ?? null;
+                if (!$name) {
+                    continue;
+                }
+
+                $locationId = (string)preg_replace('#^.*/locations/#', '', $name);
+                $placeId = $location['metadata']['placeId'] ?? null;
+                $matches = array_filter([
+                    $name,
+                    strtolower($name),
+                    $locationId,
+                    strtolower($locationId),
+                    $placeId,
+                    is_string($placeId) ? strtolower($placeId) : null,
+                ]);
+
+                foreach ($potentialResources as $resource) {
+                    $resourceLower = strtolower($resource);
+                    if (in_array($resource, $matches, true) || in_array($resourceLower, $matches, true)) {
+                        $this->rememberLocationMapping($identifier, $name, $locationId, $placeId);
+                        if ($candidate !== $identifier) {
+                            $this->rememberLocationMapping($candidate, $name, $locationId, $placeId);
+                        }
+
+                        return $this->setLastResolvedLocation($name);
+                    }
+                }
+            }
+        }
+
+        throw new RuntimeException('Google konum kimliği doğrulanamadı. Business Profile API\'de görünen accounts/.../locations/... formatındaki tam kaynak adını girin.');
+    }
+
+    private function extractLocationCandidate(string $input): string
+    {
+        $trimmed = trim($input);
+
+        if (preg_match('#(accounts/[^\s/]+/locations/[^\s/?#]+)#i', $trimmed, $matches)) {
+            return $matches[1];
+        }
+
+        if (preg_match('#(locations/[^\s/?#]+)#i', $trimmed, $matches)) {
+            return $matches[1];
+        }
+
+        if (preg_match('#ChI[A-Za-z0-9_-]+#', $trimmed, $matches)) {
+            return $matches[0];
+        }
+
+        if (preg_match('#\d{6,}#', $trimmed, $matches)) {
+            return $matches[0];
+        }
+
+        return $trimmed;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function listAccounts(): array
+    {
+        if ($this->cachedAccounts !== null) {
+            return $this->cachedAccounts;
+        }
+
+        $response = $this->request('GET', 'https://mybusiness.googleapis.com/v4/accounts');
+        $accounts = $response['accounts'] ?? [];
+
+        if (!is_array($accounts)) {
+            $accounts = [];
+        }
+
+        $this->cachedAccounts = $accounts;
+
+        return $this->cachedAccounts;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function listLocationsForAccount(string $accountName): array
+    {
+        if (isset($this->locationsCache[$accountName])) {
+            return $this->locationsCache[$accountName];
+        }
+
+        $locations = [];
+        $pageToken = null;
+
+        do {
+            $query = http_build_query(array_filter([
+                'pageSize' => 100,
+                'readMask' => 'name,title,storeCode,metadata',
+                'pageToken' => $pageToken,
+            ]), '', '&', PHP_QUERY_RFC3986);
+
+            $url = sprintf('https://mybusiness.googleapis.com/v4/%s/locations?%s', $this->encodePath($accountName), $query);
+            $response = $this->request('GET', $url);
+
+            $pageLocations = $response['locations'] ?? [];
+            if (is_array($pageLocations)) {
+                $locations = array_merge($locations, $pageLocations);
+            }
+
+            $pageToken = isset($response['nextPageToken']) ? (string)$response['nextPageToken'] : null;
+        } while ($pageToken);
+
+        $this->locationsCache[$accountName] = $locations;
+
+        return $locations;
+    }
+
+    private function rememberLocationMapping(string $input, string $canonicalName, ?string $locationId = null, ?string $placeId = null): void
+    {
+        $this->locationCache[$input] = $canonicalName;
+        $this->locationCache[strtolower($input)] = $canonicalName;
+        $this->locationCache[$canonicalName] = $canonicalName;
+        $this->locationCache[strtolower($canonicalName)] = $canonicalName;
+
+        if ($locationId) {
+            $this->locationCache[$locationId] = $canonicalName;
+            $this->locationCache[strtolower($locationId)] = $canonicalName;
+        }
+
+        if ($placeId) {
+            $this->locationCache[$placeId] = $canonicalName;
+            $this->locationCache[strtolower($placeId)] = $canonicalName;
+        }
+    }
+
+    private function setLastResolvedLocation(string $locationName): string
+    {
+        $this->lastResolvedLocationName = $locationName;
+
+        return $locationName;
+    }
+
+    public function getLastResolvedLocationName(): ?string
+    {
+        return $this->lastResolvedLocationName;
     }
 }

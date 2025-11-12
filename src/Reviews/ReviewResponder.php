@@ -49,6 +49,11 @@ class ReviewResponder
         $promptBuilder = new PromptBuilder();
 
         $reviews = $googleClient->listReviews($business['googleLocation']);
+        $resolvedLocation = $googleClient->getLastResolvedLocationName();
+        if ($resolvedLocation && $resolvedLocation !== $business['googleLocation']) {
+            $this->businessRepository->updateGoogleLocation($businessId, $resolvedLocation);
+            $business['googleLocation'] = $resolvedLocation;
+        }
         $replyCount = 0;
 
         foreach ($reviews as $review) {

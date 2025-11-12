@@ -161,6 +161,19 @@ class BusinessRepository
         $stmt->execute($params);
     }
 
+    public function updateGoogleLocation(int $businessId, string $locationName): void
+    {
+        $stmt = $this->pdo->prepare('UPDATE businesses
+                SET google_location = :location,
+                    updated_at = NOW()
+                WHERE id = :id');
+
+        $stmt->execute([
+            'location' => $locationName,
+            'id' => $businessId,
+        ]);
+    }
+
     public function updateConnectionStatus(int $businessId, string $status, ?string $message = null): void
     {
         $stmt = $this->pdo->prepare('UPDATE businesses

@@ -209,14 +209,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'test_
 
         $googleClient = new GoogleMyBusinessClient($accessToken);
         $reviews = $googleClient->listReviews($business['googleLocation']);
+        $resolvedLocation = $googleClient->getLastResolvedLocationName();
+        $locationNote = '';
+
+        if ($resolvedLocation && $resolvedLocation !== $business['googleLocation']) {
+            $businessRepository->updateGoogleLocation($businessId, $resolvedLocation);
+            $business['googleLocation'] = $resolvedLocation;
+            $locationNote = sprintf(" Konum kaydı \"%s\" olarak güncellendi.", $resolvedLocation);
+        }
 
         $businessRepository->updateConnectionStatus(
             $businessId,
             'connected',
-            sprintf('Bağlantı başarılı. %d adet yorum okunabildi.', count($reviews))
+            sprintf('Bağlantı başarılı. %d adet yorum okunabildi.', count($reviews)) . ($locationNote !== '' ? ' Konum kaydı doğrulandı.' : '')
         );
 
-        $_SESSION['flash_success'] = 'Google bağlantısı başarıyla test edildi.';
+        $_SESSION['flash_success'] = 'Google bağlantısı başarıyla test edildi.' . $locationNote;
         if ($authorizationCode !== '') {
             $_SESSION['flash_success'] .= ' Yeni jetonlar kaydedildi.';
         }
@@ -376,6 +384,7 @@ function format_datetime(?string $value): string
                         <div class="form-group">
                             <label for="google_location">Google Konum Kimliği</label>
                             <input type="text" name="google_location" id="google_location" placeholder="accounts/.../locations/..." value="<?= e($_POST['google_location'] ?? '') ?>" required <?= $connectionError ? 'disabled' : '' ?>>
+                            <p class="form-hint">Business Profile API'de listelenen tam kaynak adını (ör. <code>accounts/123456789/locations/987654321</code>) girin. Google Haritalar bağlantısı veya Place ID girersen "Bağlantıyı Test Et" işlemi uygun konumu otomatik bulmaya çalışır.</p>
                         </div>
                         <div class="form-group">
                             <label for="google_client_id">Google OAuth Client ID</label>
