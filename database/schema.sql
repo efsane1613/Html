@@ -4,6 +4,8 @@ CREATE TABLE IF NOT EXISTS businesses (
     google_location VARCHAR(255) NOT NULL,
     google_client_id VARCHAR(255) NOT NULL,
     google_client_secret VARCHAR(255) NOT NULL,
+    google_oauth_redirect_uri VARCHAR(255) NOT NULL,
+    google_oauth_javascript_origin VARCHAR(255) NOT NULL,
     google_access_token TEXT DEFAULT NULL,
     google_refresh_token TEXT DEFAULT NULL,
     google_access_token_expires_at DATETIME DEFAULT NULL,

@@ -40,8 +40,8 @@ class BusinessRepository
      */
     public function create(array $data): int
     {
-        if (empty($data['name']) || empty($data['google_location']) || empty($data['google_client_id']) || empty($data['google_client_secret']) || empty($data['gemini_api_key'])) {
-            throw new RuntimeException('Name, Google location, Google OAuth client credentials and Gemini API key are required.');
+        if (empty($data['name']) || empty($data['google_location']) || empty($data['google_client_id']) || empty($data['google_client_secret']) || empty($data['google_oauth_redirect_uri']) || empty($data['google_oauth_javascript_origin']) || empty($data['gemini_api_key'])) {
+            throw new RuntimeException('Name, Google location, Google OAuth client credentials, redirect URI, JavaScript origin and Gemini API key are required.');
         }
 
         $sql = 'INSERT INTO businesses (
@@ -49,6 +49,8 @@ class BusinessRepository
                     google_location,
                     google_client_id,
                     google_client_secret,
+                    google_oauth_redirect_uri,
+                    google_oauth_javascript_origin,
                     google_access_token,
                     google_refresh_token,
                     google_access_token_expires_at,
@@ -65,6 +67,8 @@ class BusinessRepository
                     :google_location,
                     :google_client_id,
                     :google_client_secret,
+                    :google_oauth_redirect_uri,
+                    :google_oauth_javascript_origin,
                     :google_access_token,
                     :google_refresh_token,
                     :google_access_token_expires_at,
@@ -84,6 +88,8 @@ class BusinessRepository
             'google_location' => $data['google_location'],
             'google_client_id' => $data['google_client_id'],
             'google_client_secret' => $data['google_client_secret'],
+            'google_oauth_redirect_uri' => $data['google_oauth_redirect_uri'],
+            'google_oauth_javascript_origin' => $data['google_oauth_javascript_origin'],
             'google_access_token' => $data['google_access_token'] ?? null,
             'google_refresh_token' => $data['google_refresh_token'] ?? null,
             'google_access_token_expires_at' => $data['google_access_token_expires_at'] ?? null,
@@ -115,6 +121,8 @@ class BusinessRepository
             'googleLocation' => (string)$row['google_location'],
             'googleClientId' => (string)$row['google_client_id'],
             'googleClientSecret' => (string)$row['google_client_secret'],
+            'googleRedirectUri' => (string)$row['google_oauth_redirect_uri'],
+            'googleJavascriptOrigin' => (string)$row['google_oauth_javascript_origin'],
             'googleAccessToken' => $row['google_access_token'] ?? null,
             'googleRefreshToken' => $row['google_refresh_token'] ?? null,
             'googleAccessTokenExpiresAt' => $row['google_access_token_expires_at'] ?? null,

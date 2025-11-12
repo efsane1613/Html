@@ -49,8 +49,8 @@ panelden izlemeniz için tasarlandı.
 
 Panel tek sayfalık bir arayüze sahiptir:
 
-- **Yeni İşletme Ekle:** Google Location kimliği, Google OAuth Client ID/Secret ve Gemini API anahtarını girerek işletme
-  oluşturabilirsiniz. İsterseniz ilk kurulumda aldığınız Google yetkilendirme kodunu da girip access/refresh token'ların
+- **Yeni İşletme Ekle:** Google Location kimliği, Google OAuth Client ID/Secret, Authorized Redirect URI ve Authorized JavaScript
+  Origin bilgilerini girerek işletme oluşturabilirsiniz. İsterseniz ilk kurulumda aldığınız Google yetkilendirme kodunu da girip access/refresh token'ların
   otomatik oluşmasını sağlayabilirsiniz; kodu sonra girmek isterseniz "Bağlantıyı Test Et" bölümünden tamamlayabilirsiniz.
   Gemini model alanı boş bırakılırsa sistem otomatik olarak `gemini-2.5-flash-lite-preview-09-2025` modelini kullanır.
 - **İşletme Listesi:** Kayıtlı işletmeler; OAuth kimlik bilgileri, maskelenmiş access/refresh token'ları, bağlantı durumu & son
@@ -65,6 +65,11 @@ Panel tek sayfalık bir arayüze sahiptir:
 1. Google Cloud Console üzerinde bir proje açın ve **Google My Business API** (Business Profile API) yetkisini etkinleştirin.
 2. "OAuth 2.0 Client ID" oluşturun (Web uygulaması veya masaüstü uygulaması olabilir). Panelde kullanacağınız **Client ID** ve
    **Client Secret** değerlerini not alın.
+   - Web istemcisi oluştururken aşağıdaki alanları doldurun:
+     - **Authorized redirect URIs:** `https://dybot.com.tr/seo/oauth/callback.php`
+     - **Authorized JavaScript origins:** `https://dybot.com.tr`
+     Bu örnek URL'ler projeyi `https://dybot.com.tr/seo/` altına kurduğunuz varsayımıyla verilmiştir. Farklı bir alan adına
+     kurulum yaptığınızda panelde görüntülenen varsayılan değerleri Google Cloud Console'da tanımlayın.
 3. OAuth Playground veya kendi yönlendirme URL'niz üzerinden şu kapsamla bir yetkilendirme kodu üretin:
 
    ```
@@ -73,7 +78,9 @@ Panel tek sayfalık bir arayüze sahiptir:
 
    OAuth Playground kullanıyorsanız "Use your own OAuth credentials" seçeneğiyle Client ID/Secret bilgilerinizi girin ve
    yetkilendirme kodunu kopyalayın.
-4. Yönetim panelinde işletme eklerken bu kodu girerseniz sistem otomatik olarak access/refresh token değerlerini alır ve Google
+4. Google OAuth ekranındaki yönlendirme işleminden sonra sistem `public/oauth/callback.php` sayfasında yetkilendirme kodunu
+   gösterir. Kodu kopyalayıp yönetim panelindeki "Bağlantıyı Test Et" alanına yapıştırarak access/refresh token oluşturabilirsiniz.
+5. Yönetim panelinde işletme eklerken bu kodu girerseniz sistem otomatik olarak access/refresh token değerlerini alır ve Google
    bağlantısını test eder. Kodu girmeden kaydederseniz daha sonra listedeki **Bağlantıyı Test Et** formuna kodu yapıştırıp
    bağlantıyı doğrulayabilirsiniz. Test işlemi hem yeni token oluşturur (gerekirse) hem de Google My Business API çağrısının
    başarılı olduğunu teyit eder.
@@ -104,7 +111,9 @@ işletme için son kontrol zamanını/istatistiklerini panelde gösterir.
 > ALTER TABLE businesses
 >   ADD COLUMN google_client_id VARCHAR(255) NOT NULL AFTER google_location,
 >   ADD COLUMN google_client_secret VARCHAR(255) NOT NULL AFTER google_client_id,
->   ADD COLUMN google_access_token TEXT DEFAULT NULL AFTER google_client_secret,
+>   ADD COLUMN google_oauth_redirect_uri VARCHAR(255) NOT NULL AFTER google_client_secret,
+>   ADD COLUMN google_oauth_javascript_origin VARCHAR(255) NOT NULL AFTER google_oauth_redirect_uri,
+>   ADD COLUMN google_access_token TEXT DEFAULT NULL AFTER google_oauth_javascript_origin,
 >   ADD COLUMN google_refresh_token TEXT DEFAULT NULL AFTER google_access_token,
 >   ADD COLUMN google_access_token_expires_at DATETIME DEFAULT NULL AFTER google_refresh_token,
 >   ADD COLUMN connection_status VARCHAR(32) DEFAULT 'never' AFTER google_access_token_expires_at,
@@ -113,6 +122,16 @@ işletme için son kontrol zamanını/istatistiklerini panelde gösterir.
 >   ADD COLUMN last_checked_at DATETIME DEFAULT NULL,
 >   ADD COLUMN last_check_fetched INT UNSIGNED NOT NULL DEFAULT 0,
 >   ADD COLUMN last_check_replied INT UNSIGNED NOT NULL DEFAULT 0;
+> ```
+>
+> Mevcut kayıtlar için yeni alanları varsayılan değerlerle güncellemek isterseniz (örnek alan adınız `dybot.com.tr` ise):
+>
+> ```sql
+> UPDATE businesses
+> SET google_oauth_redirect_uri = 'https://dybot.com.tr/seo/oauth/callback.php',
+>     google_oauth_javascript_origin = 'https://dybot.com.tr'
+> WHERE (google_oauth_redirect_uri IS NULL OR google_oauth_redirect_uri = '')
+>    OR (google_oauth_javascript_origin IS NULL OR google_oauth_javascript_origin = '');
 > ```
 >
 > Daha önce eklenen kayıtların Gemini modeli boş veya eski değeri içeriyorsa aşağıdaki sorgu ile varsayılan

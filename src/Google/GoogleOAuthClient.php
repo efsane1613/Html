@@ -6,8 +6,10 @@ use RuntimeException;
 
 class GoogleOAuthClient
 {
+    private const AUTH_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth';
     private const TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
     private const DEFAULT_REDIRECT_URI = 'https://developers.google.com/oauthplayground';
+    private const DEFAULT_SCOPES = ['https://www.googleapis.com/auth/business.manage'];
 
     private string $clientId;
     private string $clientSecret;
@@ -18,6 +20,28 @@ class GoogleOAuthClient
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->redirectUri = $redirectUri ?: self::DEFAULT_REDIRECT_URI;
+    }
+
+    public function buildAuthorizationUrl(?string $state = null, array $scopes = self::DEFAULT_SCOPES): string
+    {
+        if (empty($scopes)) {
+            $scopes = self::DEFAULT_SCOPES;
+        }
+
+        $params = [
+            'client_id' => $this->clientId,
+            'redirect_uri' => $this->redirectUri,
+            'response_type' => 'code',
+            'scope' => implode(' ', $scopes),
+            'access_type' => 'offline',
+            'prompt' => 'consent',
+        ];
+
+        if ($state !== null && $state !== '') {
+            $params['state'] = $state;
+        }
+
+        return self::AUTH_ENDPOINT . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
     }
 
     /**

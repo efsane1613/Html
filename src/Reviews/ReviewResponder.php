@@ -130,7 +130,11 @@ class ReviewResponder
 
         $this->logger->info('Refreshing Google access token', ['businessId' => $businessId]);
 
-        $oauthClient = new GoogleOAuthClient($business['googleClientId'], $business['googleClientSecret']);
+        $oauthClient = new GoogleOAuthClient(
+            $business['googleClientId'],
+            $business['googleClientSecret'],
+            $business['googleRedirectUri'] ?? null
+        );
         $tokenResponse = $oauthClient->refreshAccessToken($refreshToken);
 
         $newAccessToken = $tokenResponse['access_token'];

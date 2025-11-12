@@ -32,6 +32,18 @@ $pdo = null;
 $businessRepository = null;
 $reviewRepository = null;
 
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+$protocol = $isHttps ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+$scriptDir = str_replace('\\', '/', dirname($scriptName));
+if ($scriptDir === '/' || $scriptDir === '\\' || $scriptDir === '.') {
+    $scriptDir = '';
+}
+$defaultBasePath = rtrim($scriptDir, '/');
+$defaultRedirectUri = rtrim($protocol . '://' . $host . $defaultBasePath, '/') . '/oauth/callback.php';
+$defaultJavascriptOrigin = $protocol . '://' . $host;
+
 try {
     $pdo = Connection::make($databaseConfig);
     $businessRepository = new BusinessRepository($pdo);
@@ -48,6 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_b
         $googleLocation = trim($_POST['google_location'] ?? '');
         $googleClientId = trim($_POST['google_client_id'] ?? '');
         $googleClientSecret = trim($_POST['google_client_secret'] ?? '');
+        $googleRedirectUri = trim($_POST['google_redirect_uri'] ?? $defaultRedirectUri);
+        $googleJavascriptOrigin = trim($_POST['google_javascript_origin'] ?? $defaultJavascriptOrigin);
         $authorizationCode = trim($_POST['authorization_code'] ?? '');
         $geminiApiKey = trim($_POST['gemini_api_key'] ?? '');
         $geminiModel = trim($_POST['gemini_model'] ?? '');
@@ -64,6 +78,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_b
         if ($googleClientSecret === '') {
             $errors[] = 'Google OAuth Client Secret gereklidir.';
         }
+        if ($googleRedirectUri === '' || !filter_var($googleRedirectUri, FILTER_VALIDATE_URL)) {
+            $errors[] = 'Google OAuth Redirect URI geçerli bir URL olmalıdır.';
+        }
+        if ($googleJavascriptOrigin === '' || !filter_var($googleJavascriptOrigin, FILTER_VALIDATE_URL)) {
+            $errors[] = 'Authorized JavaScript Origin geçerli bir URL olmalıdır.';
+        }
         if ($geminiApiKey === '') {
             $errors[] = 'Gemini API anahtarı gereklidir.';
         }
@@ -75,6 +95,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_b
                     'google_location' => $googleLocation,
                     'google_client_id' => $googleClientId,
                     'google_client_secret' => $googleClientSecret,
+                    'google_oauth_redirect_uri' => $googleRedirectUri,
+                    'google_oauth_javascript_origin' => $googleJavascriptOrigin,
                     'gemini_api_key' => $geminiApiKey,
                     'gemini_model' => $geminiModel !== '' ? $geminiModel : null,
                     'connection_status' => 'pending',
@@ -85,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_b
 
                 if ($authorizationCode !== '') {
                     try {
-                        $oauthClient = new GoogleOAuthClient($googleClientId, $googleClientSecret);
+                        $oauthClient = new GoogleOAuthClient($googleClientId, $googleClientSecret, $googleRedirectUri);
                         $tokenResponse = $oauthClient->exchangeAuthorizationCode($authorizationCode);
 
                         $expiresAt = null;
@@ -152,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'test_
             throw new RuntimeException('İşletme kaydı bulunamadı.');
         }
 
-        $oauthClient = new GoogleOAuthClient($business['googleClientId'], $business['googleClientSecret']);
+        $oauthClient = new GoogleOAuthClient($business['googleClientId'], $business['googleClientSecret'], $business['googleRedirectUri'] ?? null);
         $tokenResponse = null;
 
         if ($authorizationCode !== '') {
@@ -345,19 +367,29 @@ function format_datetime(?string $value): string
                         <input type="hidden" name="action" value="add_business">
                         <div class="form-group">
                             <label for="name">İşletme Adı</label>
-                            <input type="text" name="name" id="name" placeholder="Örn: Poyraz Halı Yıkama" required <?= $connectionError ? 'disabled' : '' ?>>
+                            <input type="text" name="name" id="name" placeholder="Örn: Poyraz Halı Yıkama" value="<?= e($_POST['name'] ?? '') ?>" required <?= $connectionError ? 'disabled' : '' ?>>
                         </div>
                         <div class="form-group">
                             <label for="google_location">Google Konum Kimliği</label>
-                            <input type="text" name="google_location" id="google_location" placeholder="accounts/.../locations/..." required <?= $connectionError ? 'disabled' : '' ?>>
+                            <input type="text" name="google_location" id="google_location" placeholder="accounts/.../locations/..." value="<?= e($_POST['google_location'] ?? '') ?>" required <?= $connectionError ? 'disabled' : '' ?>>
                         </div>
                         <div class="form-group">
                             <label for="google_client_id">Google OAuth Client ID</label>
-                            <input type="text" name="google_client_id" id="google_client_id" placeholder="Örn: 1234567890-abc.apps.googleusercontent.com" required <?= $connectionError ? 'disabled' : '' ?>>
+                            <input type="text" name="google_client_id" id="google_client_id" placeholder="Örn: 1234567890-abc.apps.googleusercontent.com" value="<?= e($_POST['google_client_id'] ?? '') ?>" required <?= $connectionError ? 'disabled' : '' ?>>
                         </div>
                         <div class="form-group">
                             <label for="google_client_secret">Google OAuth Client Secret</label>
                             <input type="password" name="google_client_secret" id="google_client_secret" placeholder="Google Cloud konsolundaki gizli anahtar" required <?= $connectionError ? 'disabled' : '' ?>>
+                        </div>
+                        <div class="form-group">
+                            <label for="google_redirect_uri">Authorized Redirect URI</label>
+                            <input type="url" name="google_redirect_uri" id="google_redirect_uri" placeholder="Örn: <?= e($defaultRedirectUri) ?>" value="<?= e($_POST['google_redirect_uri'] ?? $defaultRedirectUri) ?>" required <?= $connectionError ? 'disabled' : '' ?>>
+                            <p class="form-hint">Google Cloud Console &rarr; OAuth 2.0 Client ayarlarında aynı URL'yi yetkili yönlendirme listesine ekleyin.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="google_javascript_origin">Authorized JavaScript Origin</label>
+                            <input type="url" name="google_javascript_origin" id="google_javascript_origin" placeholder="Örn: <?= e($defaultJavascriptOrigin) ?>" value="<?= e($_POST['google_javascript_origin'] ?? $defaultJavascriptOrigin) ?>" required <?= $connectionError ? 'disabled' : '' ?>>
+                            <p class="form-hint">Google Cloud Console &rarr; OAuth 2.0 Client ayarlarında bu alan adını "Authorized JavaScript origins" listesine ekleyin.</p>
                         </div>
                         <div class="form-group">
                             <label for="authorization_code">Yetkilendirme Kodu (opsiyonel)</label>
@@ -370,7 +402,7 @@ function format_datetime(?string $value): string
                         </div>
                         <div class="form-group">
                             <label for="gemini_model">Gemini Modeli (opsiyonel)</label>
-                            <input type="text" name="gemini_model" id="gemini_model" placeholder="Örn: gemini-2.5-flash-lite-preview-09-2025" <?= $connectionError ? 'disabled' : '' ?>>
+                            <input type="text" name="gemini_model" id="gemini_model" placeholder="Örn: gemini-2.5-flash-lite-preview-09-2025" value="<?= e($_POST['gemini_model'] ?? '') ?>" <?= $connectionError ? 'disabled' : '' ?>>
                         </div>
                         <button type="submit" <?= $connectionError ? 'disabled' : '' ?>>İşletmeyi Kaydet</button>
                     </form>
@@ -433,6 +465,14 @@ function format_datetime(?string $value): string
                                                         <dd><code title="<?= e($business['googleClientSecret']) ?>"><?= e(mask_token($business['googleClientSecret'])) ?></code></dd>
                                                     </div>
                                                     <div class="definition-list__item">
+                                                        <dt>Redirect URI</dt>
+                                                        <dd><code><?= e($business['googleRedirectUri']) ?></code></dd>
+                                                    </div>
+                                                    <div class="definition-list__item">
+                                                        <dt>JavaScript Origin</dt>
+                                                        <dd><code><?= e($business['googleJavascriptOrigin']) ?></code></dd>
+                                                    </div>
+                                                    <div class="definition-list__item">
                                                         <dt>Access Token</dt>
                                                         <dd><code title="<?= e($business['googleAccessToken']) ?>"><?= e(mask_token($business['googleAccessToken'] ?? '', 6, 4)) ?></code></dd>
                                                     </div>
@@ -488,6 +528,18 @@ function format_datetime(?string $value): string
                                             <td>
                                                 <div class="actions-stack">
                                                     <a class="link" href="?business_id=<?= $business['id'] ?>">Yorumları Gör</a>
+                                                    <?php
+                                                    $authUrl = null;
+                                                    try {
+                                                        $oauthHelper = new GoogleOAuthClient($business['googleClientId'], $business['googleClientSecret'], $business['googleRedirectUri'] ?? null);
+                                                        $authUrl = $oauthHelper->buildAuthorizationUrl((string)$business['id']);
+                                                    } catch (Throwable $exception) {
+                                                        $authUrl = null;
+                                                    }
+                                                    ?>
+                                                    <?php if ($authUrl): ?>
+                                                        <a class="button button--ghost" href="<?= e($authUrl) ?>" target="_blank" rel="noopener">Yetkilendirme Linki</a>
+                                                    <?php endif; ?>
                                                     <form method="post" class="inline-form">
                                                         <input type="hidden" name="action" value="test_connection">
                                                         <input type="hidden" name="business_id" value="<?= $business['id'] ?>">
