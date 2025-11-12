@@ -10,12 +10,12 @@ session_start();
 if (isset($_GET['logout'])) {
     session_unset();
     session_destroy();
-    header('Location: /login.php?logged_out=1');
+    header('Location: login.php?logged_out=1');
     exit;
 }
 
 if (empty($_SESSION['authenticated'])) {
-    header('Location: /login.php');
+    header('Location: login.php');
     exit;
 }
 
@@ -93,8 +93,9 @@ function e(?string $value): string
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yorum Botu Yönetim Paneli</title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="app-shell">

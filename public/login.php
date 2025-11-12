@@ -2,7 +2,7 @@
 session_start();
 
 if (!empty($_SESSION['authenticated'])) {
-    header('Location: /index.php');
+    header('Location: index.php');
     exit;
 }
 
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($username === 'admin' && $password === 'admin') {
         $_SESSION['authenticated'] = true;
         $_SESSION['flash_success'] = 'Hoş geldin! Yönetim paneline giriş yaptın.';
-        header('Location: /index.php');
+        header('Location: index.php');
         exit;
     }
 
@@ -32,8 +32,9 @@ function e(?string $value): string
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yorum Botu Giriş</title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="login-body">
     <div class="login-container">
