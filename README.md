@@ -9,7 +9,8 @@ panelden izlemeniz için tasarlandı.
 - MySQL veritabanında işletme ve yorum kayıtları
 - Admin paneli üzerinden işletme ekleme, yorum ve yanıt geçmişini görüntüleme
 - Google My Business API ile yorumları çekme ve otomatik yanıt gönderme
-- Gemini (veya uyumlu bir LLM) ile Türkçe, samimi ve profesyonel yanıt üretimi
+- Gemini (veya uyumlu bir LLM) ile yoruma göre Türkçe, İngilizce veya Almanca yanıt üretimi
+- Google OAuth client kimlik bilgileri ile otomatik access/refresh token yönetimi ve bağlantı testi
 - Cron betiği ile tam otomatik çalışma, ayrıntılı log takibi
 
 ## Gereksinimler
@@ -41,21 +42,41 @@ panelden izlemeniz için tasarlandı.
 
 4. Web sunucunuzu `public/` klasörüne yönlendirin (ör. Nginx `root` veya Apache `DocumentRoot`).
 5. `http://localhost/login.php` adresine giderek giriş yapın. Varsayılan kullanıcı adı/şifre **admin / admin**'dir.
-6. Başarılı girişten sonra yönetim paneli açılır; Google erişim jetonu ve Gemini API anahtarlarını panel üzerinden
-   kaydedebilirsiniz.
+6. Başarılı girişten sonra yönetim paneli açılır; Google OAuth Client ID/Secret bilgileri ve Gemini API anahtarlarını panel
+   üzerinden kaydedebilirsiniz.
 
 ## Admin Paneli
 
 Panel tek sayfalık bir arayüze sahiptir:
 
-- **Yeni İşletme Ekle:** Google Location kimliği, Google access token ve Gemini API anahtarı gibi zorunlu alanlarla yeni
-  işletme ekleyebilirsiniz. Gemini model alanı boş bırakılırsa sistem otomatik olarak
-  `gemini-2.5-flash-lite-preview-09-2025` modelini kullanır.
-- **İşletme Listesi:** Kayıtlı işletmeler; Google konum kimliği, maskelenmiş erişim token'ı, Gemini anahtarı/modeli ve son
-  cron kontrol zamanı ile birlikte listelenir. Aynı blokta çekilen/yanıtlanan/bekleyen yorum adetlerini hızlıca görebilirsiniz.
+- **Yeni İşletme Ekle:** Google Location kimliği, Google OAuth Client ID/Secret ve Gemini API anahtarını girerek işletme
+  oluşturabilirsiniz. İsterseniz ilk kurulumda aldığınız Google yetkilendirme kodunu da girip access/refresh token'ların
+  otomatik oluşmasını sağlayabilirsiniz; kodu sonra girmek isterseniz "Bağlantıyı Test Et" bölümünden tamamlayabilirsiniz.
+  Gemini model alanı boş bırakılırsa sistem otomatik olarak `gemini-2.5-flash-lite-preview-09-2025` modelini kullanır.
+- **İşletme Listesi:** Kayıtlı işletmeler; OAuth kimlik bilgileri, maskelenmiş access/refresh token'ları, bağlantı durumu & son
+  test zamanı ve Gemini anahtarı/modeli ile birlikte listelenir. Aynı blokta çekilen/yanıtlanan/bekleyen yorum adetlerini hızlıca
+  görebilir, gerekirse satırdaki "Bağlantıyı Test Et" butonuyla Google bağlantısını doğrulayabilirsiniz.
 - **Yorumlar:** Google'dan çekilen tüm yorumlar ve sistemin gönderdiği yanıtlar listelenir. Yanıt bekleyen yorumlar "Yanıt
   Bekliyor" etiketiyle gösterilir. Panel üst kısmındaki meta rozetler toplam/yanıtlanan/bekleyen sayılarını ve son kontrol
   zamanlarını özetler.
+
+## Google OAuth ve Token Alma Adımları
+
+1. Google Cloud Console üzerinde bir proje açın ve **Google My Business API** (Business Profile API) yetkisini etkinleştirin.
+2. "OAuth 2.0 Client ID" oluşturun (Web uygulaması veya masaüstü uygulaması olabilir). Panelde kullanacağınız **Client ID** ve
+   **Client Secret** değerlerini not alın.
+3. OAuth Playground veya kendi yönlendirme URL'niz üzerinden şu kapsamla bir yetkilendirme kodu üretin:
+
+   ```
+   https://www.googleapis.com/auth/business.manage
+   ```
+
+   OAuth Playground kullanıyorsanız "Use your own OAuth credentials" seçeneğiyle Client ID/Secret bilgilerinizi girin ve
+   yetkilendirme kodunu kopyalayın.
+4. Yönetim panelinde işletme eklerken bu kodu girerseniz sistem otomatik olarak access/refresh token değerlerini alır ve Google
+   bağlantısını test eder. Kodu girmeden kaydederseniz daha sonra listedeki **Bağlantıyı Test Et** formuna kodu yapıştırıp
+   bağlantıyı doğrulayabilirsiniz. Test işlemi hem yeni token oluşturur (gerekirse) hem de Google My Business API çağrısının
+   başarılı olduğunu teyit eder.
 
 ## Cron ile Otomasyon
 
@@ -73,21 +94,29 @@ php cron/process_reviews.php
 
 Betiği her çalıştırdığınızda sistem veritabanındaki tüm işletmeleri dolaşır, yeni yorumları kaydeder, gerekirse Gemini ile
 otomatik yanıt oluşturur ve yanıtları Google'a gönderir. İşlenen her adım `storage/app.log` dosyasına JSON formatında
-kaydedilir. Cron betiği ayrıca her işletme için son kontrol zamanını ve ilgili istatistikleri günceller; bu bilgiler panelde
-anlık olarak görünür.
+kaydedilir. Cron betiği access token süresi yaklaştığında refresh token ile otomatik yeniler, bağlantı durumunu günceller ve her
+işletme için son kontrol zamanını/istatistiklerini panelde gösterir.
 
-> Halihazırda kurulu bir veritabanınız varsa `businesses` tablosuna aşağıdaki alanları ekleyerek yeni panel istatistiklerini
-> etkinleştirebilirsiniz:
+> Halihazırda kurulu bir veritabanınız varsa `businesses` tablosunu aşağıdaki alanlarla güncelleyerek OAuth ve istatistik
+> özelliklerini etkinleştirebilirsiniz:
 >
 > ```sql
 > ALTER TABLE businesses
+>   ADD COLUMN google_client_id VARCHAR(255) NOT NULL AFTER google_location,
+>   ADD COLUMN google_client_secret VARCHAR(255) NOT NULL AFTER google_client_id,
+>   ADD COLUMN google_access_token TEXT DEFAULT NULL AFTER google_client_secret,
+>   ADD COLUMN google_refresh_token TEXT DEFAULT NULL AFTER google_access_token,
+>   ADD COLUMN google_access_token_expires_at DATETIME DEFAULT NULL AFTER google_refresh_token,
+>   ADD COLUMN connection_status VARCHAR(32) DEFAULT 'never' AFTER google_access_token_expires_at,
+>   ADD COLUMN connection_message TEXT DEFAULT NULL AFTER connection_status,
+>   ADD COLUMN connection_checked_at DATETIME DEFAULT NULL AFTER connection_message,
 >   ADD COLUMN last_checked_at DATETIME DEFAULT NULL,
 >   ADD COLUMN last_check_fetched INT UNSIGNED NOT NULL DEFAULT 0,
 >   ADD COLUMN last_check_replied INT UNSIGNED NOT NULL DEFAULT 0;
 > ```
-
-> Daha önce eklenen kayıtların Gemini modeli boş veya eski değeri içeriyorsa aşağıdaki sorgu ile
-> varsayılan `gemini-2.5-flash-lite-preview-09-2025` modeline geçirebilirsiniz:
+>
+> Daha önce eklenen kayıtların Gemini modeli boş veya eski değeri içeriyorsa aşağıdaki sorgu ile varsayılan
+> `gemini-2.5-flash-lite-preview-09-2025` modeline geçirebilirsiniz:
 >
 > ```sql
 > UPDATE businesses

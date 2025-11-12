@@ -215,6 +215,7 @@ label {
 }
 
 input[type="text"],
+input[type="password"],
 textarea {
     padding: 0.75rem 0.9rem;
     border: 1px solid rgba(15, 23, 42, 0.12);
@@ -225,6 +226,7 @@ textarea {
 }
 
 input[type="text"]:focus,
+input[type="password"]:focus,
 textarea:focus {
     outline: none;
     border-color: rgba(37, 99, 235, 0.5);
@@ -258,6 +260,25 @@ button:disabled {
     cursor: not-allowed;
     background: #cbd5f5;
     box-shadow: none;
+}
+
+.button--ghost {
+    background: rgba(15, 23, 42, 0.04);
+    color: var(--primary);
+    box-shadow: none;
+    border: 1px solid rgba(37, 99, 235, 0.25);
+    padding: 0.7rem 1.4rem;
+}
+
+.button--ghost:hover:not(:disabled) {
+    background: rgba(37, 99, 235, 0.1);
+    box-shadow: none;
+}
+
+.form-hint {
+    margin: 0;
+    font-size: 0.82rem;
+    color: #64748b;
 }
 
 .table-wrapper {
@@ -345,6 +366,58 @@ button:disabled {
     margin: 0;
     font-size: 0.88rem;
     color: #0f172a;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.25);
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.status-badge--success {
+    background: rgba(34, 197, 94, 0.22);
+    color: #15803d;
+}
+
+.status-badge--warning {
+    background: rgba(234, 179, 8, 0.24);
+    color: #b45309;
+}
+
+.status-badge--error {
+    background: rgba(248, 113, 113, 0.22);
+    color: #b91c1c;
+}
+
+.actions-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.inline-form {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.inline-input {
+    width: 100%;
+}
+
+.inline-form .inline-input {
+    padding: 0.65rem 0.8rem;
+}
+
+.inline-form button {
+    align-self: flex-start;
 }
 
 code {

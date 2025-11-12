@@ -21,6 +21,11 @@ class Logger
         $this->write('ERROR', $message, $context);
     }
 
+    public function warning(string $message, array $context = []): void
+    {
+        $this->write('WARNING', $message, $context);
+    }
+
     private function write(string $level, string $message, array $context): void
     {
         $timestamp = (new \DateTimeImmutable())->format(DATE_ATOM);

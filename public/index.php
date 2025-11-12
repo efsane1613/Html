@@ -3,6 +3,8 @@ require __DIR__ . '/../src/autoload.php';
 
 use App\Config\BusinessRepository;
 use App\Database\Connection;
+use App\Google\GoogleMyBusinessClient;
+use App\Google\GoogleOAuthClient;
 use App\Reviews\ReviewRepository;
 
 session_start();
@@ -23,7 +25,8 @@ $databaseConfig = require __DIR__ . '/../config/database.php';
 $errors = [];
 $connectionError = null;
 $success = $_SESSION['flash_success'] ?? null;
-unset($_SESSION['flash_success']);
+$flashError = $_SESSION['flash_error'] ?? null;
+unset($_SESSION['flash_success'], $_SESSION['flash_error']);
 
 $pdo = null;
 $businessRepository = null;
@@ -43,7 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_b
     } else {
         $name = trim($_POST['name'] ?? '');
         $googleLocation = trim($_POST['google_location'] ?? '');
-        $googleAccessToken = trim($_POST['google_access_token'] ?? '');
+        $googleClientId = trim($_POST['google_client_id'] ?? '');
+        $googleClientSecret = trim($_POST['google_client_secret'] ?? '');
+        $authorizationCode = trim($_POST['authorization_code'] ?? '');
         $geminiApiKey = trim($_POST['gemini_api_key'] ?? '');
         $geminiModel = trim($_POST['gemini_model'] ?? '');
 
@@ -53,8 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_b
         if ($googleLocation === '') {
             $errors[] = 'Google konum bilgisi gereklidir.';
         }
-        if ($googleAccessToken === '') {
-            $errors[] = 'Google erişim jetonu gereklidir.';
+        if ($googleClientId === '') {
+            $errors[] = 'Google OAuth Client ID gereklidir.';
+        }
+        if ($googleClientSecret === '') {
+            $errors[] = 'Google OAuth Client Secret gereklidir.';
         }
         if ($geminiApiKey === '') {
             $errors[] = 'Gemini API anahtarı gereklidir.';
@@ -62,14 +70,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_b
 
         if (!$errors && $businessRepository) {
             try {
-                $businessRepository->create([
+                $businessId = $businessRepository->create([
                     'name' => $name,
                     'google_location' => $googleLocation,
-                    'google_access_token' => $googleAccessToken,
+                    'google_client_id' => $googleClientId,
+                    'google_client_secret' => $googleClientSecret,
                     'gemini_api_key' => $geminiApiKey,
                     'gemini_model' => $geminiModel !== '' ? $geminiModel : null,
+                    'connection_status' => 'pending',
+                    'connection_message' => $authorizationCode !== ''
+                        ? 'Yetkilendirme kodu işlendi. Sonuç bekleniyor.'
+                        : 'Google yetkilendirmesi bekleniyor. "Bağlantıyı Test Et" butonu ile yetkilendirme kodu girin.',
                 ]);
-                $_SESSION['flash_success'] = 'İşletme başarıyla eklendi.';
+
+                if ($authorizationCode !== '') {
+                    try {
+                        $oauthClient = new GoogleOAuthClient($googleClientId, $googleClientSecret);
+                        $tokenResponse = $oauthClient->exchangeAuthorizationCode($authorizationCode);
+
+                        $expiresAt = null;
+                        if (isset($tokenResponse['expires_in'])) {
+                            $expiresAt = (new DateTimeImmutable())
+                                ->add(new DateInterval('PT' . max(0, (int)$tokenResponse['expires_in']) . 'S'))
+                                ->format('Y-m-d H:i:s');
+                        }
+
+                        $businessRepository->updateTokens(
+                            $businessId,
+                            $tokenResponse['access_token'],
+                            $tokenResponse['refresh_token'] ?? null,
+                            $expiresAt
+                        );
+
+                        $businessRepository->updateConnectionStatus($businessId, 'connected', 'Google OAuth yetkilendirmesi başarıyla tamamlandı.');
+                        $_SESSION['flash_success'] = 'İşletme ve Google bağlantısı başarıyla kaydedildi.';
+                    } catch (\Throwable $exception) {
+                        $businessRepository->updateConnectionStatus($businessId, 'error', $exception->getMessage());
+                        $_SESSION['flash_success'] = 'İşletme kaydedildi ancak Google bağlantısı doğrulanamadı.';
+                        $_SESSION['flash_error'] = 'Google OAuth hatası: ' . $exception->getMessage();
+                    }
+                } else {
+                    $businessRepository->updateConnectionStatus(
+                        $businessId,
+                        'pending',
+                        'Google yetkilendirmesi bekleniyor. "Bağlantıyı Test Et" butonu ile yetkilendirme kodu girin.'
+                    );
+                    $_SESSION['flash_success'] = 'İşletme kaydedildi. Google yetkilendirmesini tamamlamak için "Bağlantıyı Test Et" butonunu kullanın.';
+                }
+
                 header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
                 exit;
             } catch (\RuntimeException $exception) {
@@ -77,6 +125,86 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_b
             }
         }
     }
+}
+
+$redirectBase = strtok($_SERVER['REQUEST_URI'], '?');
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'test_connection') {
+    $businessId = isset($_POST['business_id']) ? (int)$_POST['business_id'] : 0;
+
+    if ($connectionError) {
+        $_SESSION['flash_error'] = 'Veritabanı bağlantısı olmadığı için test gerçekleştirilemedi.';
+        header('Location: ' . $redirectBase);
+        exit;
+    }
+
+    if (!$businessRepository || !$businessId) {
+        $_SESSION['flash_error'] = 'Geçersiz işletme isteği.';
+        header('Location: ' . $redirectBase);
+        exit;
+    }
+
+    $authorizationCode = trim($_POST['authorization_code'] ?? '');
+
+    try {
+        $business = $businessRepository->find($businessId);
+        if (!$business) {
+            throw new RuntimeException('İşletme kaydı bulunamadı.');
+        }
+
+        $oauthClient = new GoogleOAuthClient($business['googleClientId'], $business['googleClientSecret']);
+        $tokenResponse = null;
+
+        if ($authorizationCode !== '') {
+            $tokenResponse = $oauthClient->exchangeAuthorizationCode($authorizationCode);
+        } elseif (!empty($business['googleRefreshToken'])) {
+            $tokenResponse = $oauthClient->refreshAccessToken($business['googleRefreshToken']);
+        }
+
+        $accessToken = $business['googleAccessToken'] ?? '';
+
+        if ($tokenResponse !== null) {
+            $expiresAt = null;
+            if (isset($tokenResponse['expires_in'])) {
+                $expiresAt = (new DateTimeImmutable())
+                    ->add(new DateInterval('PT' . max(0, (int)$tokenResponse['expires_in']) . 'S'))
+                    ->format('Y-m-d H:i:s');
+            }
+
+            $businessRepository->updateTokens(
+                $businessId,
+                $tokenResponse['access_token'],
+                $tokenResponse['refresh_token'] ?? null,
+                $expiresAt
+            );
+
+            $accessToken = $tokenResponse['access_token'];
+        }
+
+        if ($accessToken === '') {
+            throw new RuntimeException('Geçerli bir erişim jetonu bulunamadı. Lütfen yetkilendirme kodu girin.');
+        }
+
+        $googleClient = new GoogleMyBusinessClient($accessToken);
+        $reviews = $googleClient->listReviews($business['googleLocation']);
+
+        $businessRepository->updateConnectionStatus(
+            $businessId,
+            'connected',
+            sprintf('Bağlantı başarılı. %d adet yorum okunabildi.', count($reviews))
+        );
+
+        $_SESSION['flash_success'] = 'Google bağlantısı başarıyla test edildi.';
+        if ($authorizationCode !== '') {
+            $_SESSION['flash_success'] .= ' Yeni jetonlar kaydedildi.';
+        }
+    } catch (\Throwable $exception) {
+        $businessRepository?->updateConnectionStatus($businessId, 'error', $exception->getMessage());
+        $_SESSION['flash_error'] = 'Bağlantı testi başarısız: ' . $exception->getMessage();
+    }
+
+    header('Location: ' . $redirectBase . ($businessId ? '?business_id=' . $businessId : ''));
+    exit;
 }
 
 $businesses = $businessRepository ? $businessRepository->all() : [];
@@ -114,6 +242,26 @@ function mask_token(?string $value, int $prefix = 4, int $suffix = 4): string
     $maskedLength = $length - ($prefix + $suffix);
 
     return substr($value, 0, $prefix) . str_repeat('•', $maskedLength) . substr($value, -$suffix);
+}
+
+/**
+ * @return array{label:string,class:string}
+ */
+function connection_status_meta(?string $status): array
+{
+    $status = strtolower((string)$status);
+
+    switch ($status) {
+        case 'connected':
+            return ['label' => 'Bağlı', 'class' => 'status-badge status-badge--success'];
+        case 'pending':
+            return ['label' => 'Beklemede', 'class' => 'status-badge status-badge--warning'];
+        case 'error':
+            return ['label' => 'Hata', 'class' => 'status-badge status-badge--error'];
+        case 'never':
+        default:
+            return ['label' => 'Test edilmedi', 'class' => 'status-badge'];
+    }
 }
 
 function format_datetime(?string $value): string
@@ -185,6 +333,10 @@ function format_datetime(?string $value): string
                         </div>
                     <?php endif; ?>
 
+                    <?php if ($flashError): ?>
+                        <div class="alert alert-error"><?= e($flashError) ?></div>
+                    <?php endif; ?>
+
                     <?php if ($success): ?>
                         <div class="alert alert-success"><?= e($success) ?></div>
                     <?php endif; ?>
@@ -200,8 +352,17 @@ function format_datetime(?string $value): string
                             <input type="text" name="google_location" id="google_location" placeholder="accounts/.../locations/..." required <?= $connectionError ? 'disabled' : '' ?>>
                         </div>
                         <div class="form-group">
-                            <label for="google_access_token">Google Access Token</label>
-                            <textarea name="google_access_token" id="google_access_token" rows="3" placeholder="OAuth erişim jetonunu buraya gir" required <?= $connectionError ? 'disabled' : '' ?>></textarea>
+                            <label for="google_client_id">Google OAuth Client ID</label>
+                            <input type="text" name="google_client_id" id="google_client_id" placeholder="Örn: 1234567890-abc.apps.googleusercontent.com" required <?= $connectionError ? 'disabled' : '' ?>>
+                        </div>
+                        <div class="form-group">
+                            <label for="google_client_secret">Google OAuth Client Secret</label>
+                            <input type="password" name="google_client_secret" id="google_client_secret" placeholder="Google Cloud konsolundaki gizli anahtar" required <?= $connectionError ? 'disabled' : '' ?>>
+                        </div>
+                        <div class="form-group">
+                            <label for="authorization_code">Yetkilendirme Kodu (opsiyonel)</label>
+                            <input type="text" name="authorization_code" id="authorization_code" placeholder="İlk kurulumda alınan yetkilendirme kodu" <?= $connectionError ? 'disabled' : '' ?>>
+                            <p class="form-hint">Kod girmediğin durumda "Bağlantıyı Test Et" bölümünden Google OAuth yetkilendirmesini tamamlayabilirsin.</p>
                         </div>
                         <div class="form-group">
                             <label for="gemini_api_key">Gemini API Anahtarı</label>
@@ -257,14 +418,41 @@ function format_datetime(?string $value): string
                                                 <span class="table-subtitle">Eklenme: <?= format_datetime($business['createdAt'] ?? null) ?></span>
                                             </td>
                                             <td>
+                                                <?php $statusMeta = connection_status_meta($business['connectionStatus'] ?? ''); ?>
                                                 <dl class="definition-list">
                                                     <div class="definition-list__item">
                                                         <dt>Google Konum</dt>
                                                         <dd><code><?= e($business['googleLocation']) ?></code></dd>
                                                     </div>
                                                     <div class="definition-list__item">
-                                                        <dt>Google Token</dt>
-                                                        <dd><code title="<?= e($business['googleAccessToken']) ?>"><?= e(mask_token($business['googleAccessToken'])) ?></code></dd>
+                                                        <dt>Client ID</dt>
+                                                        <dd><code><?= e($business['googleClientId']) ?></code></dd>
+                                                    </div>
+                                                    <div class="definition-list__item">
+                                                        <dt>Client Secret</dt>
+                                                        <dd><code title="<?= e($business['googleClientSecret']) ?>"><?= e(mask_token($business['googleClientSecret'])) ?></code></dd>
+                                                    </div>
+                                                    <div class="definition-list__item">
+                                                        <dt>Access Token</dt>
+                                                        <dd><code title="<?= e($business['googleAccessToken']) ?>"><?= e(mask_token($business['googleAccessToken'] ?? '', 6, 4)) ?></code></dd>
+                                                    </div>
+                                                    <div class="definition-list__item">
+                                                        <dt>Refresh Token</dt>
+                                                        <dd><code title="<?= e($business['googleRefreshToken']) ?>"><?= e(mask_token($business['googleRefreshToken'] ?? '', 6, 4)) ?></code></dd>
+                                                    </div>
+                                                    <div class="definition-list__item">
+                                                        <dt>Token Sonu</dt>
+                                                        <dd><?= format_datetime($business['googleAccessTokenExpiresAt'] ?? null) ?></dd>
+                                                    </div>
+                                                    <div class="definition-list__item">
+                                                        <dt>Bağlantı</dt>
+                                                        <dd>
+                                                            <span class="<?= e($statusMeta['class']) ?>"><?= e($statusMeta['label']) ?></span>
+                                                            <?php if (!empty($business['connectionMessage'])): ?>
+                                                                <div class="muted"><?= e($business['connectionMessage']) ?></div>
+                                                            <?php endif; ?>
+                                                            <div class="muted">Son test: <?= format_datetime($business['connectionCheckedAt'] ?? null) ?></div>
+                                                        </dd>
                                                     </div>
                                                     <div class="definition-list__item">
                                                         <dt>Gemini API</dt>
@@ -297,7 +485,17 @@ function format_datetime(?string $value): string
                                                 <div class="table-subtitle">Son Çekilen Adet: <?= $business['lastCheckFetched'] ?></div>
                                                 <div class="table-subtitle">Son Yanıtlanan Adet: <?= $business['lastCheckReplied'] ?></div>
                                             </td>
-                                            <td><a class="link" href="?business_id=<?= $business['id'] ?>">Yorumları Gör</a></td>
+                                            <td>
+                                                <div class="actions-stack">
+                                                    <a class="link" href="?business_id=<?= $business['id'] ?>">Yorumları Gör</a>
+                                                    <form method="post" class="inline-form">
+                                                        <input type="hidden" name="action" value="test_connection">
+                                                        <input type="hidden" name="business_id" value="<?= $business['id'] ?>">
+                                                        <input type="text" name="authorization_code" class="inline-input" placeholder="Yetkilendirme kodu (opsiyonel)">
+                                                        <button type="submit" class="button button--ghost">Bağlantıyı Test Et</button>
+                                                    </form>
+                                                </div>
+                                            </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
