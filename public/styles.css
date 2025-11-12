@@ -298,8 +298,10 @@ button:disabled {
 .table-wrapper {
     border: 1px solid rgba(148, 163, 184, 0.18);
     border-radius: var(--radius-md);
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
     background: #f8fafc;
+    max-width: 100%;
 }
 
 .table-wrapper--scroll {
