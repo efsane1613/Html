@@ -26,6 +26,24 @@
   -webkit-text-fill-color: transparent;
 }
 
+.dybot-tabs {
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dybot-tabs .nav-tab {
+  border: none;
+  color: var(--dybot-muted);
+  background: transparent;
+  font-weight: 600;
+  transition: color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dybot-tabs .nav-tab-active {
+  color: var(--dybot-accent-secondary);
+  box-shadow: inset 0 -3px 0 var(--dybot-accent-secondary);
+}
+
 .dybot-panels {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));

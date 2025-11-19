@@ -151,6 +151,10 @@ if (!class_exists('Dybot_Icerik_Uretme')) {
             $image_result = '';
             $image_mime = '';
             $errors = [];
+            $notices = [];
+
+            $requested_tab = sanitize_key($_REQUEST['dybot_active_tab'] ?? ($_GET['tab'] ?? 'text'));
+            $active_tab = in_array($requested_tab, ['text', 'image', 'settings'], true) ? $requested_tab : 'text';
 
             if (isset($_POST['dybot_text_submit'])) {
                 check_admin_referer(self::NONCE_ACTION);
@@ -168,6 +172,18 @@ if (!class_exists('Dybot_Icerik_Uretme')) {
                     if (is_wp_error($text_result)) {
                         $errors[] = $text_result->get_error_message();
                         $text_result = '';
+                    } else {
+                        $draft_id = $this->save_text_as_draft($topic, $text_result);
+                        if (is_wp_error($draft_id)) {
+                            $errors[] = $draft_id->get_error_message();
+                        } else {
+                            $edit_link = get_edit_post_link($draft_id, '');
+                            $message = __('Makale taslak olarak kaydedildi.', 'dybot-icerik-uretme');
+                            if ($edit_link) {
+                                $message .= ' <a href="' . esc_url($edit_link) . '">' . esc_html__('Taslağı düzenle', 'dybot-icerik-uretme') . '</a>';
+                            }
+                            $notices[] = $message;
+                        }
                     }
                 }
             }
@@ -193,16 +209,39 @@ if (!class_exists('Dybot_Icerik_Uretme')) {
             echo '<div class="wrap dybot-wrapper">';
             echo '<h1 class="dybot-title">' . esc_html__('DYBOT İçerik Üretme', 'dybot-icerik-uretme') . '</h1>';
 
+            echo '<nav class="nav-tab-wrapper dybot-tabs">';
+            $tabs = [
+                'text' => __('Makale Üretimi', 'dybot-icerik-uretme'),
+                'image' => __('Görsel Üretimi', 'dybot-icerik-uretme'),
+                'settings' => __('Ayarlar', 'dybot-icerik-uretme'),
+            ];
+            foreach ($tabs as $tab_key => $label) {
+                $class = $tab_key === $active_tab ? ' nav-tab-active' : '';
+                $url = add_query_arg('tab', $tab_key, admin_url('admin.php?page=dybot-icerik-uretme'));
+                printf('<a href="%s" class="nav-tab%s">%s</a>', esc_url($url), esc_attr($class), esc_html($label));
+            }
+            echo '</nav>';
+
             if ($errors) {
                 foreach ($errors as $error) {
                     printf('<div class="notice notice-error"><p>%s</p></div>', esc_html($error));
                 }
             }
 
+            if ($notices) {
+                foreach ($notices as $notice) {
+                    printf('<div class="notice notice-success"><p>%s</p></div>', wp_kses_post($notice));
+                }
+            }
+
             echo '<div class="dybot-panels">';
-            $this->render_settings_panel($options);
-            $this->render_text_panel($text_result);
-            $this->render_image_panel($image_result, $image_mime);
+            if ($active_tab === 'settings') {
+                $this->render_settings_panel($options);
+            } elseif ($active_tab === 'image') {
+                $this->render_image_panel($image_result, $image_mime);
+            } else {
+                $this->render_text_panel($text_result);
+            }
             echo '</div>';
             echo '</div>';
         }
@@ -225,6 +264,7 @@ if (!class_exists('Dybot_Icerik_Uretme')) {
             echo '<h2>' . esc_html__('SEO Makale Üretimi', 'dybot-icerik-uretme') . '</h2>';
             echo '<form method="post">';
             wp_nonce_field(self::NONCE_ACTION);
+            echo '<input type="hidden" name="dybot_active_tab" value="text" />';
             echo '<div class="dybot-field-grid">';
             $this->render_input(__('Konu Başlığı', 'dybot-icerik-uretme'), 'dybot_topic', 'text', ['placeholder' => __('Örn: Sürdürülebilir Enerji Trendleri', 'dybot-icerik-uretme')]);
             $this->render_input(__('Hedef Anahtar Kelimeler', 'dybot-icerik-uretme'), 'dybot_keywords', 'text', ['placeholder' => __('Virgülle ayırın', 'dybot-icerik-uretme')]);
@@ -245,6 +285,7 @@ if (!class_exists('Dybot_Icerik_Uretme')) {
             echo '<h2>' . esc_html__('Görsel Üretimi', 'dybot-icerik-uretme') . '</h2>';
             echo '<form method="post">';
             wp_nonce_field(self::NONCE_ACTION);
+            echo '<input type="hidden" name="dybot_active_tab" value="image" />';
             $this->render_input(__('Görsel Prompt', 'dybot-icerik-uretme'), 'dybot_image_prompt', 'text', ['placeholder' => __('Örn: Gece vakti neon ışıklı futuristik şehir', 'dybot-icerik-uretme')]);
             submit_button(__('Görsel Üret', 'dybot-icerik-uretme'), 'primary', 'dybot_image_submit');
             echo '</form>';
@@ -273,6 +314,21 @@ if (!class_exists('Dybot_Icerik_Uretme')) {
                 esc_attr($name),
                 $attributes
             );
+        }
+
+        private function save_text_as_draft(string $topic, string $content)
+        {
+            $post_data = [
+                'post_title' => $topic ? wp_strip_all_tags($topic) : __('DYBOT Taslak İçerik', 'dybot-icerik-uretme'),
+                'post_content' => wp_kses_post($content),
+                'post_status' => 'draft',
+                'post_type' => 'post',
+                'meta_input' => [
+                    '_dybot_generated' => 1,
+                ],
+            ];
+
+            return wp_insert_post($post_data, true);
         }
 
         private function generate_text(string $topic, string $keywords, int $word_count, string $intent, array $options)
